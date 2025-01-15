@@ -1,0 +1,6 @@
+export const FILE_PATHS = {
+    FILIPINO_WORDS_MAIN: "./FILIPINO_WORDS_MAIN.txt",
+    REMOVED_WORDS: "./WORDS_REMOVED.txt",
+    ADDED_WORDS: "./WORDS_ADDED.txt",
+    PUZZLE_WORDS: "./WORDS_PUZZLE.txt",
+  };
