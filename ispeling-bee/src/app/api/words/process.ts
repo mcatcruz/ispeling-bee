@@ -121,6 +121,21 @@ const filterRemovedWords = (params: { originalAndAddedWords: string[], removedWo
     }
 }
 
+/**
+ * Sorts an array of filtered words in alphabetical order.
+ *
+ * Steps:
+ * 1. Takes an array of filtered words.
+ * 2. Sorts the words alphabetically in ascending order (A-Z).
+ *
+ * @param {Object} params - An object containing:
+ *   - filteredWords: Array of words to be sorted.
+ *
+ * @returns {string[]} A sorted array of words in alphabetical order.
+ *
+ * @throws {Error} If an error occurs during the sorting process.
+ */
+
 const sortWordsAlphabetically = (params: { filteredWords: string[] }): string[] => {
     const { filteredWords } = params;
 
@@ -133,6 +148,28 @@ const sortWordsAlphabetically = (params: { filteredWords: string[] }): string[] 
     } 
 }
 
-const savePuzzleWordsToFile = async (params: { sortedWords: string[] }): => {
-
+const savePuzzleWordsToFile = async (sortedWords: string[], filePath: string): Promise<void> => {
+    try {
+        await fs.writeFile(filePath, sortedWords.join("\n"), "utf-8");
+        console.log(`Puzzle words list saved to ${filePath}`);
+    } catch (error) {
+        console.error("Error saving puzzle words to file: ", error);
+        throw error;
+    }
 }
+
+
+const processPuzzleWords = async (): Promise<void> => {
+    try {
+        const wordFiles = await readWordFiles(FILE_PATHS);
+        const consolidatedWordFiles = await consolidateWordFiles(wordFiles);
+        await savePuzzleWordsToFile(consolidatedWordFiles, FILE_PATHS.puzzleWordsPath);
+
+        console.log("Puzzle words processed and saved successfully!")
+
+    } catch (error) {
+        console.error( "Error processing puzzle words: ", error);
+    }
+}
+
+processPuzzleWords();
