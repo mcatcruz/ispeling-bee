@@ -81,7 +81,7 @@ const consolidateWordFiles = async (params: IWordLists): Promise<string[]> => {
 
     try {
         const combinedFileContents = [...new Set([...originalWords, ...addedWords])];
-        const filteredWords = await filterRemovedWords( { originalAndAddedWords: combinedFileContents,  removedWords });
+        const filteredWords = filterRemovedWords( { originalAndAddedWords: combinedFileContents,  removedWords });
         const sortedWords = sortWordsAlphabetically(filteredWords);
 
         return sortedWords
@@ -116,14 +116,23 @@ const filterRemovedWords = (params: { originalAndAddedWords: string[], removedWo
         return filteredWords;
 
     } catch (error) {
-        console.error("Error filter words list: ", error)
+        console.error("Error filter words list: ", error);
         throw error;
     }
-
 }
 
-const sortWordsAlphabetically = async (params: filteredWords: string[]): Promise<string[]> => {
+const sortWordsAlphabetically = (params: { filteredWords: string[] }): string[] => {
+    const { filteredWords } = params;
 
+    try {
+        return filteredWords.sort();
+
+    } catch (error) {
+        console.error("Error alphabetizing words list: ", error);
+        throw error;
+    } 
 }
 
-Save to File: saveAllWordsToFile(sortedWords)
+const savePuzzleWordsToFile = async (params: { sortedWords: string[] }): => {
+
+}
