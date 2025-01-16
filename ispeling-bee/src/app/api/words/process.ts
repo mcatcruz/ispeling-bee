@@ -5,6 +5,7 @@
 
 import { FILE_PATHS } from "./config";
 import { promises as fs } from "fs";
+import { IFilePaths } from "./config/interfaces";
 
 
 /**
@@ -32,18 +33,36 @@ const getWordsFromFile = async (filePath: string): Promise<string[]> => {
 }
 
 /**
- * Reads original, added, and removed words from their respective files,
- * processes them, and creates a combined, filtered, and sorted list of words.
+ * Reads the original, removed, and added word files and returns their contents as arrays.
  *
- * Steps:
- * - Reads the three input files in parallel.
- * - Combines original and added words.
- * - Removes words listed in the removed words file.
- * - Sorts the resulting list alphabetically.
- *
- * @param   {CreateAllWordsParams}
- * @returns {Promise<void>} A promise that resolves to undefined if an error occurs.
- * @throws {Error} If any file cannot be read or processed.
+ * @param {IFilePaths} params - Object containing file paths for the original, removed, and added word lists.
+ * @returns {Promise<{ originalWords: string[]; removedWords: string[]; addedWords: string[] }>}
+ *          A promise that resolves to an object with arrays of words from each file.
+ * @throws {Error} If any file cannot be read, the function will throw an error and stop execution.
  */
 
-const createFilipinoWordsPuzzle = async ()
+
+const readWordFiles() = async (params: IFilePaths): Promise<{ originalWords: string[]; removedWords: string[]; addedWords: string[] }> => {
+    const { originalWordsPath, removedWordsPath, addedWordsPath } = params;
+
+    try {
+        const originalWords = await getWordsFromFile(originalWordsPath);
+        const removedWords = await getWordsFromFile(removedWordsPath);
+        const addedWords = await getWordsFromFile(addedWordsPath);
+
+        return { originalWords, removedWords, addedWords };
+    } catch (error) {
+        console.error("Error reading files: ", error);
+        throw error;
+    }
+}
+
+const consolidateWordFiles() = async (params: originalWords, addedWords) => {
+    
+}
+
+
+
+Filter Words: filterRemovedWords(combinedWords, removedWords)
+Sort Words: sortWordsAlphabetically(filteredWords)
+Save to File: saveAllWordsToFile(sortedWords)
