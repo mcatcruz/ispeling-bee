@@ -5,7 +5,7 @@
 
 import { FILE_PATHS } from "./config";
 import { promises as fs } from "fs";
-import { IFilePaths } from "./config/interfaces";
+import { IFilePaths, IWordLists } from "./config/interfaces";
 
 
 /**
@@ -36,13 +36,13 @@ const getWordsFromFile = async (filePath: string): Promise<string[]> => {
  * Reads the original, removed, and added word files and returns their contents as arrays.
  *
  * @param {IFilePaths} params - Object containing file paths for the original, removed, and added word lists.
- * @returns {Promise<{ originalWords: string[]; removedWords: string[]; addedWords: string[] }>}
+ * @returns {Promise<IWordLists>}
  *          A promise that resolves to an object with arrays of words from each file.
  * @throws {Error} If any file cannot be read, the function will throw an error and stop execution.
  */
 
 
-const readWordFiles() = async (params: IFilePaths): Promise<{ originalWords: string[]; removedWords: string[]; addedWords: string[] }> => {
+const readWordFiles = async (params: IFilePaths): Promise<IWordLists> => {
     const { originalWordsPath, removedWordsPath, addedWordsPath } = params;
 
     try {
@@ -57,12 +57,73 @@ const readWordFiles() = async (params: IFilePaths): Promise<{ originalWords: str
     }
 }
 
-const consolidateWordFiles() = async (params: originalWords, addedWords) => {
-    
+/**
+ * Consolidates word lists by combining the original and added words,
+ * removing any words found in the removed words list, and sorting the result alphabetically.
+ *
+ * Steps:
+ * 1. Combines original and added words into a deduplicated list.
+ * 2. Filters out words that appear in the removed words list.
+ * 3. Sorts the final list in alphabetical order.
+ *
+ * @param {IWordLists} params - An object containing:
+ *   - originalWords: Array of words from the master word list.
+ *   - removedWords: Array of words to be excluded.
+ *   - addedWords: Array of additional words to be included.
+ *
+ * @returns {Promise<string[]>} A promise that resolves to a sorted array of unique, filtered words.
+ *
+ * @throws {Error} If an error occurs during the consolidation process.
+ */
+
+const consolidateWordFiles = async (params: IWordLists): Promise<string[]> => {
+    const { originalWords, removedWords, addedWords } = params;
+
+    try {
+        const combinedFileContents = [...new Set([...originalWords, ...addedWords])];
+        const filteredWords = await filterRemovedWords( { originalAndAddedWords: combinedFileContents,  removedWords });
+        const sortedWords = sortWordsAlphabetically(filteredWords);
+
+        return sortedWords
+    } catch (error) {
+        console.error("Error consolidating puzzle words list: ", error);
+        throw error;
+    }
 }
 
+/**
+ * Filters out words that appear in the removed words list from a combined list of original and added words.
+ *
+ * Steps:
+ * 1. Converts the removed words list into a Set for efficient lookup.
+ * 2. Filters the combined word list to exclude any words found in the removed words list.
+ *
+ * @param {Object} params - An object containing:
+ *   - originalAndAddedWords: Array of words from the combined original and added word lists.
+ *   - removedWords: Array of words to be excluded from the final list.
+ *
+ * @returns {string[]} An array of filtered words.
+ *
+ * @throws {Error} If an error occurs during the filtering process.
+ */
 
+const filterRemovedWords = (params: { originalAndAddedWords: string[], removedWords: string[] }): string[] => {
+    const {originalAndAddedWords, removedWords} = params
+    try {
+        const removedWordsSet = new Set(removedWords);
+        const filteredWords = originalAndAddedWords.filter((word: string) => !removedWordsSet.has(word));
+    
+        return filteredWords;
 
-Filter Words: filterRemovedWords(combinedWords, removedWords)
-Sort Words: sortWordsAlphabetically(filteredWords)
+    } catch (error) {
+        console.error("Error filter words list: ", error)
+        throw error;
+    }
+
+}
+
+const sortWordsAlphabetically = async (params: filteredWords: string[]): Promise<string[]> => {
+
+}
+
 Save to File: saveAllWordsToFile(sortedWords)

@@ -4,5 +4,11 @@ export interface IFilePaths {
     originalWordsPath: string;
     removedWordsPath: string;
     addedWordsPath: string;
-    outputPath: string;
+    puzzleWordsPath: string;
   }
+
+export interface IWordLists {
+    originalWords: string[];
+    removedWords: string[];
+    addedWords: string[];
+}
