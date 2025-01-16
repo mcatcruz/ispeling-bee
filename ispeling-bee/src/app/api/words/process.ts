@@ -148,6 +148,21 @@ const sortWordsAlphabetically = (params: { filteredWords: string[] }): string[] 
     } 
 }
 
+/**
+ * Saves the sorted puzzle words to a specified file.
+ *
+ * Steps:
+ * 1. Joins the sorted words into a single string, separating each word with a newline.
+ * 2. Writes the content to the provided file path asynchronously.
+ *
+ * @param {string[]} sortedWords - An array of alphabetically sorted puzzle words to be saved.
+ * @param {string} filePath - The file path where the puzzle words will be saved.
+ *
+ * @returns {Promise<void>} A promise that resolves when the file is successfully written.
+ *
+ * @throws {Error} If an error occurs while writing to the file.
+ */
+
 const savePuzzleWordsToFile = async (sortedWords: string[], filePath: string): Promise<void> => {
     try {
         await fs.writeFile(filePath, sortedWords.join("\n"), "utf-8");
@@ -158,6 +173,18 @@ const savePuzzleWordsToFile = async (sortedWords: string[], filePath: string): P
     }
 }
 
+/**
+ * Processes the puzzle words by reading, consolidating, and saving them to a file.
+ *
+ * Workflow:
+ * 1. Reads the original, added, and removed word files.
+ * 2. Consolidates the word lists by combining, filtering, and sorting them.
+ * 3. Saves the final list of puzzle words to the specified file path.
+ *
+ * @returns {Promise<void>} A promise that resolves when the entire process completes successfully.
+ *
+ * @throws {Error} If any step in the process (reading, consolidating, or saving) fails.
+ */
 
 const processPuzzleWords = async (): Promise<void> => {
     try {
