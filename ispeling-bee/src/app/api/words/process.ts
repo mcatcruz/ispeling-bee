@@ -3,8 +3,8 @@
 // http://aspell.net/
 // https://github.com/raymelon/tagalog-dictionary-scraper/blob/master/tagalog_dict.txt
 
-import { FILE_PATHS } from "./config";
-import { promises as fs } from "fs";
+import { FILE_PATHS } from "./config/config";
+import * as fs from "fs/promises";
 import { IFilePaths, IWordLists } from "./config/interfaces";
 
 
@@ -20,6 +20,7 @@ import { IFilePaths, IWordLists } from "./config/interfaces";
 const getWordsFromFile = async (filePath: string): Promise<string[]> => {
     try {
         const txtFileContent = await fs.readFile(filePath, 'utf-8');
+        if (!txtFileContent) return [];
 
         return txtFileContent
             .split("\n")
@@ -42,7 +43,7 @@ const getWordsFromFile = async (filePath: string): Promise<string[]> => {
  */
 
 
-const readWordFiles = async (params: IFilePaths): Promise<IWordLists> => {
+export const readWordFiles = async (params: IFilePaths): Promise<IWordLists> => {
     const { originalWordsPath, removedWordsPath, addedWordsPath } = params;
 
     try {
@@ -76,13 +77,13 @@ const readWordFiles = async (params: IFilePaths): Promise<IWordLists> => {
  * @throws {Error} If an error occurs during the consolidation process.
  */
 
-const consolidateWordFiles = async (params: IWordLists): Promise<string[]> => {
+export const consolidateWordFiles = async (params: IWordLists): Promise<string[]> => {
     const { originalWords, removedWords, addedWords } = params;
 
     try {
         const combinedFileContents = [...new Set([...originalWords, ...addedWords])];
         const filteredWords = filterRemovedWords( { originalAndAddedWords: combinedFileContents,  removedWords });
-        const sortedWords = sortWordsAlphabetically(filteredWords);
+        const sortedWords = sortWordsAlphabetically({ filteredWords } );
 
         return sortedWords
     } catch (error) {
@@ -107,7 +108,7 @@ const consolidateWordFiles = async (params: IWordLists): Promise<string[]> => {
  * @throws {Error} If an error occurs during the filtering process.
  */
 
-const filterRemovedWords = (params: { originalAndAddedWords: string[], removedWords: string[] }): string[] => {
+export const filterRemovedWords = (params: { originalAndAddedWords: string[], removedWords: string[] }): string[] => {
     const {originalAndAddedWords, removedWords} = params
     try {
         const removedWordsSet = new Set(removedWords);
@@ -136,7 +137,7 @@ const filterRemovedWords = (params: { originalAndAddedWords: string[], removedWo
  * @throws {Error} If an error occurs during the sorting process.
  */
 
-const sortWordsAlphabetically = (params: { filteredWords: string[] }): string[] => {
+export const sortWordsAlphabetically = (params: { filteredWords: string[] }): string[] => {
     const { filteredWords } = params;
 
     try {
@@ -163,7 +164,7 @@ const sortWordsAlphabetically = (params: { filteredWords: string[] }): string[] 
  * @throws {Error} If an error occurs while writing to the file.
  */
 
-const savePuzzleWordsToFile = async (sortedWords: string[], filePath: string): Promise<void> => {
+export const savePuzzleWordsToFile = async (sortedWords: string[], filePath: string): Promise<void> => {
     try {
         await fs.writeFile(filePath, sortedWords.join("\n"), "utf-8");
         console.log(`Puzzle words list saved to ${filePath}`);
@@ -186,7 +187,7 @@ const savePuzzleWordsToFile = async (sortedWords: string[], filePath: string): P
  * @throws {Error} If any step in the process (reading, consolidating, or saving) fails.
  */
 
-const processPuzzleWords = async (): Promise<void> => {
+export const processPuzzleWords = async (): Promise<void> => {
     try {
         const wordFiles = await readWordFiles(FILE_PATHS);
         const consolidatedWordFiles = await consolidateWordFiles(wordFiles);
