@@ -20,12 +20,21 @@ import { IFilePaths, IWordLists } from "./config/interfaces";
 const getWordsFromFile = async (filePath: string): Promise<string[]> => {
     try {
         const txtFileContent = await fs.readFile(filePath, 'utf-8');
-        if (!txtFileContent) return [];
+        if (!txtFileContent.trim()) {
+            console.warn(`File at ${filePath} is empty.`);
+            return []
+        };
 
-        return txtFileContent
+        const words = txtFileContent
             .split("\n")
             .map((word: string) => word.trim().toLowerCase())
             .filter((word: string) => word != "");
+        
+        if (words.length === 0) {
+            console.warn(`File at ${filePath} contains no valid words.`)
+        };
+
+        return words;
 
     } catch (error) {
         console.error(`Error reading file path: ${filePath}: `, error);
