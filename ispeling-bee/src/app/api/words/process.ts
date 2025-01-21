@@ -29,7 +29,7 @@ const getWordsFromFile = async (filePath: string): Promise<string[]> => {
 
     } catch (error) {
         console.error(`Error reading file path: ${filePath}: `, error);
-        return [];
+        throw error;
     }
 }
 
@@ -54,7 +54,7 @@ export const readWordFiles = async (params: IFilePaths): Promise<IWordLists> => 
         return { originalWords, removedWords, addedWords };
     } catch (error) {
         console.error("Error reading files: ", error);
-        throw error;
+        throw new Error("Error reading files.");
     }
 }
 

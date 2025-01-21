@@ -1,7 +1,7 @@
 import * as fs from "fs/promises";
 import { FILE_PATHS } from "../config/config";
 import { readWordFiles } from "../process";
-import { FILE } from "dns";
+import { IFilePaths } from "../config/interfaces";
 
 // Mock file data
 jest.mock("fs/promises", () => ({
@@ -17,6 +17,10 @@ describe('readWordFiles function', () => {
     beforeEach(() => {
         (fs.readFile as jest.Mock).mockImplementation((filePath: string) => {
             console.log(`Reading mock file: ${filePath}`);  // Debug log
+            if (!filePath) {
+                 // Simulate a file not found error for empty paths
+                throw new Error("ENOENT: no such file or directory, open ''")
+            }
             if (filePath === FILE_PATHS.originalWordsPath) return Promise.resolve(mockOriginalWords);
             if (filePath === FILE_PATHS.removedWordsPath) return Promise.resolve(mockRemovedWords);
             if (filePath === FILE_PATHS.addedWordsPath) return Promise.resolve(mockAddedWords);
@@ -41,6 +45,19 @@ describe('readWordFiles function', () => {
         });
         
     });
+
+    
+    it('should trigger the catch block if originalWordsPath, removedWordsPath, or addedWordsPath is missing or does not exist', async () => {
+        const EMPTY_FILE_PATHS: IFilePaths = { 
+            originalWordsPath: '', 
+            removedWordsPath: '', 
+            addedWordsPath: '', 
+            puzzleWordsPath: '' 
+        }
+
+        await expect(readWordFiles(EMPTY_FILE_PATHS)).rejects.toThrow("Error reading files.");
+
+    })
 
 })
 
