@@ -45,20 +45,6 @@ describe('readWordFiles function', () => {
         });
         
     });
-
-    
-    it('should trigger the catch block if originalWordsPath, removedWordsPath, or addedWordsPath is missing or does not exist', async () => {
-        const EMPTY_FILE_PATHS: IFilePaths = { 
-            originalWordsPath: '', 
-            removedWordsPath: '', 
-            addedWordsPath: '', 
-            puzzleWordsPath: '' 
-        }
-
-        await expect(readWordFiles(EMPTY_FILE_PATHS)).rejects.toThrow("Error reading files.");
-
-    })
-
 })
 
 

@@ -17,14 +17,23 @@ import { IFilePaths, IWordLists } from "./config/interfaces";
  * @throws {Error} If the file cannot be read.
  */
 
-const getWordsFromFile = async (filePath: string): Promise<string[]> => {
+export const getWordsFromFile = async (filePath: string): Promise<string[]> => {
     try {
+
+        // Validate file extension
+        if (!filePath.endsWith('.txt')) {
+            throw new Error("Invalid file type. Only supports files ending in .txt.");
+        }
+
+        // Read the file
         const txtFileContent = await fs.readFile(filePath, 'utf-8');
-        if (!txtFileContent.trim()) {
+        
+        if (!txtFileContent) {
             console.warn(`File at ${filePath} is empty.`);
-            return []
+            return [];
         };
 
+        // Process and return file content
         const words = txtFileContent
             .split("\n")
             .map((word: string) => word.trim().toLowerCase())
