@@ -1,5 +1,6 @@
 import * as fs from "fs/promises";
 import { getWordsFromFile } from "../process";
+import { warn } from "console";
 
 // Mock file data
 jest.mock("fs/promises", () => ({
@@ -52,9 +53,26 @@ describe('getWordsFromFile function', () => {
             expect(result).toEqual([]);
             
             expect(warnSpy).toHaveBeenCalled();
-            expect(console.warn).toHaveBeenCalledWith(expect.stringContaining(`File at ${filePath} is empty.`));
+            expect(console.warn).toHaveBeenCalledWith(`File at ${filePath} is empty.`);
             
             warnSpy.mockRestore();
-        })
+        });
+
+        it('should return an empty array and log a warning if txt file is empty after processing', async () => {
+            (fs.readFile as jest.Mock).mockResolvedValue(" \n \n \n");
+
+            const filePath = "mockWhitespaceFilePath.txt"
+
+            const warnSpy = jest.spyOn(console, 'warn').mockImplementation();
+
+            const result = await getWordsFromFile(filePath);
+
+            expect(result).toEqual([]);
+            
+            expect(warnSpy).toHaveBeenCalled();
+            expect(console.warn).toHaveBeenCalledWith(`File at ${filePath} contains no valid words.`);
+
+            warnSpy.mockRestore();
+        });
 
 })
