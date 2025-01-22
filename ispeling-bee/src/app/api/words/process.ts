@@ -20,6 +20,11 @@ import { IFilePaths, IWordLists } from "./config/interfaces";
 export const getWordsFromFile = async (filePath: string): Promise<string[]> => {
     try {
 
+        // Validate file path is not empty
+        if (!filePath) {
+            throw new Error("File path cannot be empty.")
+        }
+
         // Validate file extension
         if (!filePath.endsWith('.txt')) {
             throw new Error("Invalid file type. Only supports files ending in .txt.");
