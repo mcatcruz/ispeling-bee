@@ -13,91 +13,86 @@ describe('getWordsFromFile function', () => {
 
     beforeEach(() => {
         jest.clearAllMocks();
-        mockReadFile.mockImplementation((filePath: string) => {
-            if (filePath === 'nonExistentFile.txt') {
-                throw new Error("ENOENT: no such file or directory");
-            }
-            return Promise.resolve("mock content");
-        });
 
     });
-
 
     it('should throw an error if fs.readFile fails (file not found)', async () => {
         const mockError = new Error("ENOENT: no such file or directory");
 
+        // Mock the rejected value for fs.readFile
         mockReadFile.mockRejectedValueOnce(mockError);
 
+        // Spy on the console.error to validate the catch block logging
         const errorSpy = jest.spyOn(console, 'error').mockImplementation();
 
-        console.log("Mock function called with:", mockReadFile.mock.calls);
-
+        // Test that the function throws the correct error
         await expect(getWordsFromFile('nonExistentFile.txt')).rejects.toThrow(mockError);
 
+        // Validate that console.error was called with the expected arguments
         expect(errorSpy).toHaveBeenCalledWith(`Error reading file path: nonExistentFile.txt: `, expect.any(Error));
         
         errorSpy.mockRestore();
     });
 
-        it('should throw an error if file path does not end in .txt', async () => {
-            const incorrectFilePath: string  = "originalWordsPath.pdf"
+    it('should throw an error if file path does not end in .txt', async () => {
+        const incorrectFilePath: string  = "originalWordsPath.pdf"
 
-            await expect(getWordsFromFile(incorrectFilePath)).rejects.toThrow(
-                "Invalid file type. Only supports files ending in .txt."
-            );
-    
-        });
+        await expect(getWordsFromFile(incorrectFilePath)).rejects.toThrow(
+            "Invalid file type. Only supports files ending in .txt."
+        );
 
-        it('should throw an error if file path is empty', async () => {
+    });
 
-            await expect(getWordsFromFile("")).rejects.toThrow("File path cannot be empty.");
-    
-        });
-    
+    it('should throw an error if file path is empty', async () => {
 
-        it('should return an array of trimmed, lowercase words', async () => {
+        await expect(getWordsFromFile("")).rejects.toThrow("File path cannot be empty.");
 
-            mockReadFile.mockResolvedValue(mockOriginalWords);
+    });
 
-            const result = await getWordsFromFile('mockOriginalWordsPath.txt');
 
-            expect(result).toEqual(["ako", "ikaw", "puta"]);  
+    it('should return an array of trimmed, lowercase words', async () => {
 
-        });
+        mockReadFile.mockResolvedValue(mockOriginalWords);
 
-        it('should return an empty array and log a warning if valid txt file is empty', async () => {
-            mockReadFile.mockResolvedValue('');
-            
-            const filePath: string = "mockEmptyFilePath.txt"
-            
-            const warnSpy = jest.spyOn(console, 'warn').mockImplementation();
+        const result = await getWordsFromFile('mockOriginalWordsPath.txt');
 
-            const result = await getWordsFromFile(filePath);
+        expect(result).toEqual(["ako", "ikaw", "puta"]);  
 
-            expect(result).toEqual([]);
-            
-            expect(warnSpy).toHaveBeenCalled();
-            expect(console.warn).toHaveBeenCalledWith(`File at ${filePath} is empty.`);
-            
-            warnSpy.mockRestore();
-        });
+    });
 
-        it('should return an empty array and log a warning if txt file is empty after processing', async () => {
-            mockReadFile.mockResolvedValue(" \n \n \n");
+    it('should return an empty array and log a warning if valid txt file is empty', async () => {
+        mockReadFile.mockResolvedValue('');
+        
+        const filePath: string = "mockEmptyFilePath.txt"
+        
+        const warnSpy = jest.spyOn(console, 'warn').mockImplementation();
 
-            const filePath: string = "mockWhitespaceFilePath.txt"
+        const result = await getWordsFromFile(filePath);
 
-            const warnSpy = jest.spyOn(console, 'warn').mockImplementation();
+        expect(result).toEqual([]);
+        
+        expect(warnSpy).toHaveBeenCalled();
+        expect(console.warn).toHaveBeenCalledWith(`File at ${filePath} is empty.`);
+        
+        warnSpy.mockRestore();
+    });
 
-            const result = await getWordsFromFile(filePath);
+    it('should return an empty array and log a warning if txt file is empty after processing', async () => {
+        mockReadFile.mockResolvedValue(" \n \n \n");
 
-            expect(result).toEqual([]);
-            
-            expect(warnSpy).toHaveBeenCalled();
-            expect(console.warn).toHaveBeenCalledWith(`File at ${filePath} contains no valid words.`);
+        const filePath: string = "mockWhitespaceFilePath.txt"
 
-            warnSpy.mockRestore();
-        });
+        const warnSpy = jest.spyOn(console, 'warn').mockImplementation();
+
+        const result = await getWordsFromFile(filePath);
+
+        expect(result).toEqual([]);
+        
+        expect(warnSpy).toHaveBeenCalled();
+        expect(console.warn).toHaveBeenCalledWith(`File at ${filePath} contains no valid words.`);
+
+        warnSpy.mockRestore();
+    });
 
 
 })
