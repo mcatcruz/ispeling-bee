@@ -19,7 +19,7 @@ import { IFilePaths, IWordLists } from "./config/interfaces";
 
 export const getWordsFromFile = async (filePath: string): Promise<string[]> => {
     try {
-
+    
         // Validate file path is not empty
         if (!filePath) {
             throw new Error("File path cannot be empty.")
@@ -32,7 +32,8 @@ export const getWordsFromFile = async (filePath: string): Promise<string[]> => {
 
         // Read the file
         const txtFileContent = await fs.readFile(filePath, 'utf-8');
-        
+        console.log("fs.readFile result:", txtFileContent);
+
         if (!txtFileContent) {
             console.warn(`File at ${filePath} is empty.`);
             return [];
@@ -52,6 +53,7 @@ export const getWordsFromFile = async (filePath: string): Promise<string[]> => {
 
     } catch (error) {
         console.error(`Error reading file path: ${filePath}: `, error);
+        console.log("Catch block executed for file path:", filePath); // Debug log
         throw error;
     }
 }

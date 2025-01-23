@@ -1,6 +1,5 @@
 import * as fs from "fs/promises";
 import { getWordsFromFile } from "../process";
-import { warn } from "console";
 
 // Mock file data
 jest.mock("fs/promises", () => ({
@@ -9,11 +8,36 @@ jest.mock("fs/promises", () => ({
 }));
 
 describe('getWordsFromFile function', () => { 
-    const mockOriginalWords = "ako \n ikaw\n puta";
+    const mockOriginalWords: string = "ako \n ikaw\n puta";
+    const mockReadFile = fs.readFile as jest.Mock;
 
     beforeEach(() => {
-            jest.clearAllMocks();
-        })
+        jest.clearAllMocks();
+        mockReadFile.mockImplementation((filePath: string) => {
+            if (filePath === 'nonExistentFile.txt') {
+                throw new Error("ENOENT: no such file or directory");
+            }
+            return Promise.resolve("mock content");
+        });
+
+    });
+
+
+    it('should throw an error if fs.readFile fails (file not found)', async () => {
+        const mockError = new Error("ENOENT: no such file or directory");
+
+        mockReadFile.mockRejectedValueOnce(mockError);
+
+        const errorSpy = jest.spyOn(console, 'error').mockImplementation();
+
+        console.log("Mock function called with:", mockReadFile.mock.calls);
+
+        await expect(getWordsFromFile('nonExistentFile.txt')).rejects.toThrow(mockError);
+
+        expect(errorSpy).toHaveBeenCalledWith(`Error reading file path: nonExistentFile.txt: `, expect.any(Error));
+        
+        errorSpy.mockRestore();
+    });
 
         it('should throw an error if file path does not end in .txt', async () => {
             const incorrectFilePath: string  = "originalWordsPath.pdf"
@@ -33,7 +57,7 @@ describe('getWordsFromFile function', () => {
 
         it('should return an array of trimmed, lowercase words', async () => {
 
-            (fs.readFile as jest.Mock).mockResolvedValue(mockOriginalWords);
+            mockReadFile.mockResolvedValue(mockOriginalWords);
 
             const result = await getWordsFromFile('mockOriginalWordsPath.txt');
 
@@ -42,9 +66,9 @@ describe('getWordsFromFile function', () => {
         });
 
         it('should return an empty array and log a warning if valid txt file is empty', async () => {
-            (fs.readFile as jest.Mock).mockResolvedValue('');
+            mockReadFile.mockResolvedValue('');
             
-            const filePath = "mockEmptyFilePath.txt"
+            const filePath: string = "mockEmptyFilePath.txt"
             
             const warnSpy = jest.spyOn(console, 'warn').mockImplementation();
 
@@ -59,9 +83,9 @@ describe('getWordsFromFile function', () => {
         });
 
         it('should return an empty array and log a warning if txt file is empty after processing', async () => {
-            (fs.readFile as jest.Mock).mockResolvedValue(" \n \n \n");
+            mockReadFile.mockResolvedValue(" \n \n \n");
 
-            const filePath = "mockWhitespaceFilePath.txt"
+            const filePath: string = "mockWhitespaceFilePath.txt"
 
             const warnSpy = jest.spyOn(console, 'warn').mockImplementation();
 
@@ -74,5 +98,6 @@ describe('getWordsFromFile function', () => {
 
             warnSpy.mockRestore();
         });
+
 
 })
