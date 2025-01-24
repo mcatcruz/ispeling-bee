@@ -20,24 +20,20 @@ import { FILE_PATHS } from "../config/config";
 
 describe('readWordFiles function', () => {
     const mockGetWordsFromFile = jest.mocked(getWordsFromFile);
-    
+
     beforeEach(() => {
-
-        // Mock getWordsFromFile responses
-        mockGetWordsFromFile
-            .mockResolvedValueOnce(['ako', 'ikaw', 'puta'])
-            .mockResolvedValueOnce(['puta'])
-            .mockResolvedValueOnce(['siya'])
-
+        jest.clearAllMocks();
     });
 
-    afterEach(() => {
-        jest.clearAllMocks();
-    })
         
     it('should return an object containing words from txt files', async () => {
+        mockGetWordsFromFile
+        .mockResolvedValueOnce(['ako', 'ikaw', 'puta'])
+        .mockResolvedValueOnce(['puta'])
+        .mockResolvedValueOnce(['siya'])
+        
         const result = await readWordFiles(FILE_PATHS, mockGetWordsFromFile);
-
+        
         expect(result).toEqual({
             originalWords: ['ako', 'ikaw', 'puta'],
             removedWords: ['puta'],
@@ -46,7 +42,7 @@ describe('readWordFiles function', () => {
         
     });
 
-    it.only('should call getWordsFromFile for each file path file', async () => {
+    it('should call getWordsFromFile for each file path file', async () => {
         await readWordFiles(FILE_PATHS, mockGetWordsFromFile);
 
         expect(getWordsFromFile).toHaveBeenCalledTimes(3);
@@ -58,12 +54,14 @@ describe('readWordFiles function', () => {
     });
 
     it('should propagate errors from getWordsFile', async () => {
-        const error = new Error('File read failed');
+        const error = new Error('Error reading files.');
+        
+        // mockGetWordsFromFile.mockReset()
 
         mockGetWordsFromFile.mockRejectedValueOnce(error)
 
-        await expect(readWordFiles(FILE_PATHS)).rejects.toThrow('File read failed');
-
+        await expect(readWordFiles(FILE_PATHS, mockGetWordsFromFile)).rejects.toThrow('Error reading files.');
     })
+
 
 })
