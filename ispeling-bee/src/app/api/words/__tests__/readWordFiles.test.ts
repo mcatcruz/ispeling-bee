@@ -35,7 +35,7 @@ describe('readWordFiles function', () => {
         jest.clearAllMocks();
     })
         
-    it.only('should return an object containing words from txt files', async () => {
+    it('should return an object containing words from txt files', async () => {
         const result = await readWordFiles(FILE_PATHS, mockGetWordsFromFile);
 
         expect(result).toEqual({
@@ -51,9 +51,9 @@ describe('readWordFiles function', () => {
 
         expect(getWordsFromFile).toHaveBeenCalledTimes(3);
 
-        expect(getWordsFromFile).toHaveBeenCalledWith(1, FILE_PATHS.originalWordsPath);
-        expect(getWordsFromFile).toHaveBeenCalledWith(2, FILE_PATHS.removedWordsPath);
-        expect(getWordsFromFile).toHaveBeenCalledWith(3, FILE_PATHS.removedWordsPath);
+        expect(getWordsFromFile).toHaveBeenCalledWith(FILE_PATHS.originalWordsPath);
+        expect(getWordsFromFile).toHaveBeenCalledWith(FILE_PATHS.removedWordsPath);
+        expect(getWordsFromFile).toHaveBeenCalledWith(FILE_PATHS.removedWordsPath);
 
     });
 
