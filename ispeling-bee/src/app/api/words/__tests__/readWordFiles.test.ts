@@ -1,42 +1,42 @@
-import * as fs from "fs/promises";
-import { FILE_PATHS } from "../config/config";
-import { readWordFiles } from "../process";
-import { IFilePaths } from "../config/interfaces";
 
 // Mock file data
 jest.mock("fs/promises", () => ({
     readFile: jest.fn(),
     writeFile: jest.fn(),
 }));
+import * as fs from "fs/promises";
+
+// Mock getWordsFromFile
+jest.mock('../process', () => ({
+    ...jest.requireActual("../process"), 
+    getWordsFromFile: jest.fn()
+}));
+
+import { readWordFiles } from "../process";
+import { getWordsFromFile } from "../process";
+
+import { FILE_PATHS } from "../config/config";
+
 
 describe('readWordFiles function', () => {
-    const mockOriginalWords = "ako\nikaw\nputa";
-    const mockRemovedWords = "puta";
-    const mockAddedWords = "siya";
-
-    beforeEach(() => {
-        (fs.readFile as jest.Mock).mockImplementation((filePath: string) => {
-            console.log(`Reading mock file: ${filePath}`);  // Debug log
-            if (!filePath) {
-                 // Simulate a file not found error for empty paths
-                throw new Error("ENOENT: no such file or directory, open ''")
-            }
-            if (filePath === FILE_PATHS.originalWordsPath) return Promise.resolve(mockOriginalWords);
-            if (filePath === FILE_PATHS.removedWordsPath) return Promise.resolve(mockRemovedWords);
-            if (filePath === FILE_PATHS.addedWordsPath) return Promise.resolve(mockAddedWords);
-            return Promise.resolve('');
-        });
+    const mockGetWordsFromFile = jest.mocked(getWordsFromFile);
     
-        (fs.writeFile as jest.Mock).mockResolvedValue(undefined);
-        });
+    beforeEach(() => {
 
-        afterEach(() => {
-            jest.clearAllMocks();
-        })
+        // Mock getWordsFromFile responses
+        mockGetWordsFromFile
+            .mockResolvedValueOnce(['ako', 'ikaw', 'puta'])
+            .mockResolvedValueOnce(['puta'])
+            .mockResolvedValueOnce(['siya'])
 
+    });
 
-    it('should return an object containing words from txt files', async () => {
-        const result = await readWordFiles(FILE_PATHS);
+    afterEach(() => {
+        jest.clearAllMocks();
+    })
+        
+    it.only('should return an object containing words from txt files', async () => {
+        const result = await readWordFiles(FILE_PATHS, mockGetWordsFromFile);
 
         expect(result).toEqual({
             originalWords: ['ako', 'ikaw', 'puta'],
@@ -46,7 +46,24 @@ describe('readWordFiles function', () => {
         
     });
 
+    it.only('should call getWordsFromFile for each file path file', async () => {
+        await readWordFiles(FILE_PATHS, mockGetWordsFromFile);
+
+        expect(getWordsFromFile).toHaveBeenCalledTimes(3);
+
+        expect(getWordsFromFile).toHaveBeenCalledWith(1, FILE_PATHS.originalWordsPath);
+        expect(getWordsFromFile).toHaveBeenCalledWith(2, FILE_PATHS.removedWordsPath);
+        expect(getWordsFromFile).toHaveBeenCalledWith(3, FILE_PATHS.removedWordsPath);
+
+    });
+
+    it('should propagate errors from getWordsFile', async () => {
+        const error = new Error('File read failed');
+
+        mockGetWordsFromFile.mockRejectedValueOnce(error)
+
+        await expect(readWordFiles(FILE_PATHS)).rejects.toThrow('File read failed');
+
+    })
+
 })
-
-
-

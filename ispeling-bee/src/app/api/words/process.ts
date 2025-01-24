@@ -33,6 +33,7 @@ export const getWordsFromFile = async (filePath: string): Promise<string[]> => {
         // Read the file
         const txtFileContent = await fs.readFile(filePath, 'utf-8');
         console.log("fs.readFile result:", txtFileContent);
+        console.log("Calling getWordsFromFile with:", filePath);
 
         if (!txtFileContent) {
             console.warn(`File at ${filePath} is empty.`);
@@ -68,13 +69,15 @@ export const getWordsFromFile = async (filePath: string): Promise<string[]> => {
  */
 
 
-export const readWordFiles = async (params: IFilePaths): Promise<IWordLists> => {
+export const readWordFiles = async (params: IFilePaths, getWordsFn = getWordsFromFile): Promise<IWordLists> => {
     const { originalWordsPath, removedWordsPath, addedWordsPath } = params;
 
     try {
-        const originalWords = await getWordsFromFile(originalWordsPath);
-        const removedWords = await getWordsFromFile(removedWordsPath);
-        const addedWords = await getWordsFromFile(addedWordsPath);
+
+        const originalWords = await getWordsFn(originalWordsPath);
+        const removedWords = await getWordsFn(removedWordsPath);
+        const addedWords = await getWordsFn(addedWordsPath);
+
 
         return { originalWords, removedWords, addedWords };
     } catch (error) {
