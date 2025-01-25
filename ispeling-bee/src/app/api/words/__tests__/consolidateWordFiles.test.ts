@@ -28,7 +28,7 @@ describe('consolidateWordFiles function', () => {
         jest.clearAllMocks();
     });
 
-    it.only('should return an array of alphabetized strings with no duplicates', async () => {
+    it('should return an array of alphabetized strings with no duplicates', async () => {
         mockFilterRemovedWords.mockImplementation(({ originalAndAddedWords }) => {
             return originalAndAddedWords.filter(word => word !== 'puta');
         });
@@ -38,7 +38,9 @@ describe('consolidateWordFiles function', () => {
         });
 
         const result = await consolidateWordFiles(mockWordsObject, 
-                { filterRemovedWords: mockFilterRemovedWords, alphabetizeWords: mockAlphabetizeWords});
+                { filterRemovedWords: mockFilterRemovedWords, 
+                    alphabetizeWords: mockAlphabetizeWords
+                });
 
         expect(result).toEqual(['ako', 'ikaw','siya']);
         
@@ -55,7 +57,7 @@ describe('consolidateWordFiles function', () => {
         expect(result).toEqual(['ako','ikaw']);
     })
 
-    it('should use combinedFileContents if removedWords is empty', async () => {
+    it.only('should use combinedFileContents if removedWords is empty', async () => {
         mockWordsObject['removedWords'] = [];
 
         const result = await consolidateWordFiles(mockWordsObject);

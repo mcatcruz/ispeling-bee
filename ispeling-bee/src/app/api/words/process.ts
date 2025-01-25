@@ -109,10 +109,7 @@ export const consolidateWordFiles = async (params: IWordLists, dependencies = { 
     const { originalWords, removedWords, addedWords } = params;
 
     try {
-
-        console.log("Using filterRemovedWords:", filterRemovedWords);
-        console.log("Using alphabetizeWords:", alphabetizeWords);
-
+        
         const  combinedFileContents = 
             addedWords.length > 0 ? [...new Set([...originalWords, ...addedWords])] : originalWords;
         
