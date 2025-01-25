@@ -105,13 +105,22 @@ export const readWordFiles = async (params: IFilePaths, getWordsFn = getWordsFro
  * @throws {Error} If an error occurs during the consolidation process.
  */
 
-export const consolidateWordFiles = async (params: IWordLists): Promise<string[]> => {
+export const consolidateWordFiles = async (params: IWordLists, dependencies = { filterRemovedWords, alphabetizeWords}): Promise<string[]> => {
     const { originalWords, removedWords, addedWords } = params;
 
     try {
-        const combinedFileContents = [...new Set([...originalWords, ...addedWords])];
-        const filteredWords = filterRemovedWords( { originalAndAddedWords: combinedFileContents,  removedWords });
-        const sortedWords = sortWordsAlphabetically({ filteredWords } );
+
+        console.log("Using filterRemovedWords:", filterRemovedWords);
+        console.log("Using alphabetizeWords:", alphabetizeWords);
+
+        const  combinedFileContents = 
+            addedWords.length > 0 ? [...new Set([...originalWords, ...addedWords])] : originalWords;
+        
+        const filteredWords = 
+            removedWords.length > 0 ? 
+                dependencies.filterRemovedWords( { originalAndAddedWords: combinedFileContents,  removedWords }) : combinedFileContents
+            
+        const sortedWords = dependencies.alphabetizeWords({ filteredWords } );
 
         return sortedWords
     } catch (error) {
@@ -165,7 +174,7 @@ export const filterRemovedWords = (params: { originalAndAddedWords: string[], re
  * @throws {Error} If an error occurs during the sorting process.
  */
 
-export const sortWordsAlphabetically = (params: { filteredWords: string[] }): string[] => {
+export const alphabetizeWords = (params: { filteredWords: string[] }): string[] => {
     const { filteredWords } = params;
 
     try {
