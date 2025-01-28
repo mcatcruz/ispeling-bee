@@ -6,15 +6,15 @@ jest.mock("fs/promises", () => ({
 
 import * as fs from "fs/promises";
 
-jest.mock('../process', () => ({
-    ...jest.requireActual("../process"), 
+jest.mock('../../process', () => ({
+    ...jest.requireActual("../../process"), 
     readWordFiles: jest.fn(),
     consolidateWordFiles: jest.fn(),
     savePuzzleWordsToFile: jest.fn(),
 }));
 
-import { consolidateWordFiles, processPuzzleWords, readWordFiles, savePuzzleWordsToFile } from "../process";
-import { FILE_PATHS } from "../config/config";
+import { consolidateWordFiles, processPuzzleWords, readWordFiles, savePuzzleWordsToFile } from  "../../process";
+import { FILE_PATHS } from "../../config/config";
 
 describe('processPuzzleWords function', () => {
     const mockReadWordFiles = jest.mocked(readWordFiles);

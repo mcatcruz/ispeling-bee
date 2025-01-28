@@ -6,7 +6,7 @@ jest.mock("fs/promises", () => ({
 
 import * as fs from "fs/promises";
 
-import { savePuzzleWordsToFile } from "../process";
+import { savePuzzleWordsToFile } from  "../../process";
 
 describe('savePuzzleWordsToFile function', () => {
     const mockWriteFile = jest.mocked(fs.writeFile);

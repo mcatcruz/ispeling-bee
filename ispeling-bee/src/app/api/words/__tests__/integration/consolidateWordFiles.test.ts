@@ -7,13 +7,13 @@ jest.mock("fs/promises", () => ({
 
 import * as fs from "fs/promises";
 
-jest.mock('../process', () => ({
-    ...jest.requireActual("../process"), 
+jest.mock('../../process', () => ({
+    ...jest.requireActual("../../process"), 
     filterRemovedWords: jest.fn(),
     alphabetizeWords: jest.fn()
 }));
 
-import { consolidateWordFiles, filterRemovedWords, alphabetizeWords } from "../process";
+import { consolidateWordFiles, filterRemovedWords, alphabetizeWords } from  "../../process";
 
 describe('consolidateWordFiles function', () => {
     const mockFilterRemovedWords = jest.mocked(filterRemovedWords);

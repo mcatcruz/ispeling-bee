@@ -7,15 +7,14 @@ jest.mock("fs/promises", () => ({
 import * as fs from "fs/promises";
 
 // Mock getWordsFromFile
-jest.mock('../process', () => ({
-    ...jest.requireActual("../process"), 
+jest.mock('../../process', () => ({
+    ...jest.requireActual("../../process"), 
     getWordsFromFile: jest.fn()
 }));
 
-import { readWordFiles } from "../process";
-import { getWordsFromFile } from "../process";
+import { readWordFiles, getWordsFromFile } from "../../process";
 
-import { FILE_PATHS } from "../config/config";
+import { FILE_PATHS } from "../../config/config";
 
 
 describe('readWordFiles function', () => {

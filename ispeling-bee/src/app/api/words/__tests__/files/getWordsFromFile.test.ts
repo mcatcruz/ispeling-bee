@@ -1,5 +1,5 @@
 import * as fs from "fs/promises";
-import { getWordsFromFile } from "../process";
+import { getWordsFromFile } from "../../process";
 
 // Mock file data
 jest.mock("fs/promises", () => ({

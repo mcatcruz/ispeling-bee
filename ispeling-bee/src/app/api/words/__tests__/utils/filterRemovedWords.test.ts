@@ -6,7 +6,7 @@ jest.mock("fs/promises", () => ({
 
 import * as fs from "fs/promises";
 
-import { filterRemovedWords } from "../process";
+import { filterRemovedWords } from  "../../process";
 
 describe('filterRemovedWords function', () => {
     let mockWordsObject: { originalWords: string[]; addedWords: string[]; removedWords: string[] };

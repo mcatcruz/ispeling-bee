@@ -7,11 +7,11 @@ jest.mock("fs/promises", () => ({
 import * as fs from "fs/promises";
 
 
-jest.mock('../process', () => ({
-    ...jest.requireActual("../process"), 
+jest.mock('../../process', () => ({
+    ...jest.requireActual("../../process"), 
     filterRemovedWords: jest.fn()
 }));
-import { alphabetizeWords } from "../process";
+import { alphabetizeWords } from  "../../process";
 
 describe('alphabetizeWords function', () => {
     
