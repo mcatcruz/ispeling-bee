@@ -18,14 +18,17 @@ import { consolidateWordFiles, filterRemovedWords, alphabetizeWords } from "../p
 describe('consolidateWordFiles function', () => {
     const mockFilterRemovedWords = jest.mocked(filterRemovedWords);
     const mockAlphabetizeWords = jest.mocked(alphabetizeWords);
-    const mockWordsObject = { 
-        originalWords: ['ako', 'ikaw', 'puta'], 
-        addedWords: ['ako', 'siya'], 
-        removedWords: ['puta']
-    };
-
+    let mockWordsObject: { originalWords: string[]; addedWords: string[]; removedWords: string[] };
+  
     beforeEach(() => {
         jest.clearAllMocks();
+
+        mockWordsObject = { 
+            originalWords: ['ako', 'ikaw', 'puta'], 
+            addedWords: ['ako', 'siya'], 
+            removedWords: ['puta']
+        };
+    
     });
 
     it('should return an array of alphabetized strings with no duplicates', async () => {
@@ -57,9 +60,8 @@ describe('consolidateWordFiles function', () => {
         expect(result).toEqual(['ako','ikaw']);
     })
 
-    it.only('should use combinedFileContents if removedWords is empty', async () => {
+    it('should use combinedFileContents if removedWords is empty', async () => {
         mockWordsObject['removedWords'] = [];
-
         const result = await consolidateWordFiles(mockWordsObject);
 
         expect(filterRemovedWords).toHaveBeenCalledTimes(0);
