@@ -9,7 +9,7 @@ jest.mock("fs/promises", () => ({
 
 describe('getWordsFromFile function', () => { 
     const mockOriginalWords: string = "ako \n ikaw\n puta";
-    const mockReadFile = fs.readFile as jest.Mock;
+    const mockReadFile = jest.mocked(fs.readFile)
 
     beforeEach(() => {
         jest.clearAllMocks();

@@ -36,7 +36,7 @@ describe('savePuzzleWordsToFile function', () => {
 
         const mockError = new Error("Error saving puzzle words to file");
 
-        // Mock the rejected value for fs.readFile
+        // Mock the rejected value for fs.writeFile
         mockWriteFile.mockRejectedValueOnce(mockError);
 
         // Spy on the console.error to validate the catch block logging

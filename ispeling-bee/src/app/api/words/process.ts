@@ -215,17 +215,21 @@ export const savePuzzleWordsToFile = async (sortedWords: string[], filePath: str
  * 1. Reads the original, added, and removed word files.
  * 2. Consolidates the word lists by combining, filtering, and sorting them.
  * 3. Saves the final list of puzzle words to the specified file path.
+ * 
+ * @param {IFilePaths} params - Object containing file paths for the original, removed, and added word lists.
  *
  * @returns {Promise<void>} A promise that resolves when the entire process completes successfully.
  *
  * @throws {Error} If any step in the process (reading, consolidating, or saving) fails.
  */
 
-export const processPuzzleWords = async (): Promise<void> => {
+export const processPuzzleWords = async (filePaths: IFilePaths, dependencies = {readWordFiles, consolidateWordFiles, savePuzzleWordsToFile}): Promise<void> => {
     try {
-        const wordFiles = await readWordFiles(FILE_PATHS);
-        const consolidatedWordFiles = await consolidateWordFiles(wordFiles);
-        await savePuzzleWordsToFile(consolidatedWordFiles, FILE_PATHS.puzzleWordsPath);
+
+        
+        const wordFiles = await dependencies.readWordFiles(filePaths);
+        const consolidatedWordFiles = await dependencies.consolidateWordFiles(wordFiles);
+        await dependencies.savePuzzleWordsToFile(consolidatedWordFiles, filePaths.puzzleWordsPath);
 
         console.log("Puzzle words processed and saved successfully!")
 
@@ -234,4 +238,4 @@ export const processPuzzleWords = async (): Promise<void> => {
     }
 }
 
-processPuzzleWords();
+processPuzzleWords(FILE_PATHS);
