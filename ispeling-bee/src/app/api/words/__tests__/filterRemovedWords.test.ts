@@ -16,8 +16,8 @@ describe('filterRemovedWords function', () => {
     beforeEach(() => {
         jest.clearAllMocks()
 
-         // Set up mock data
-         mockWordsObject = { 
+        // Set up mock data
+        mockWordsObject = { 
             originalWords: ['ako', 'ikaw', 'puta'], 
             addedWords: ['ako', 'siya', 'hindot'], 
             removedWords: ['puta', 'hindot']
@@ -30,26 +30,26 @@ describe('filterRemovedWords function', () => {
                 : mockWordsObject['originalWords'];
     });
 
-    it('should remove all words from removedWords', async () => {
-        const result = await filterRemovedWords({ originalAndAddedWords: mockCombinedFileContents, removedWords: mockWordsObject['removedWords'] });
+    it('should remove all words from removedWords', () => {
+        const result = filterRemovedWords({ originalAndAddedWords: mockCombinedFileContents, removedWords: mockWordsObject['removedWords'] });
 
         expect(result).toEqual(['ako', 'ikaw', 'siya'])
-    })
+    });
     
-    it('should not remove any words if removedWords is empty', async () => {
+    it('should not remove any words if removedWords is empty', () => {
         mockWordsObject.removedWords = [];
 
-        const result = await filterRemovedWords({ originalAndAddedWords: mockCombinedFileContents, removedWords: mockWordsObject['removedWords'] });
+        const result = filterRemovedWords({ originalAndAddedWords: mockCombinedFileContents, removedWords: mockWordsObject['removedWords'] });
 
         expect(result).toEqual(mockCombinedFileContents);
-    })
+    });
 
-    it('should not remove any words if there are no matches between originalAndAddedWords and removedWords', async () => {
+    it('should not remove any words if there are no matches between originalAndAddedWords and removedWords', () => {
         mockWordsObject.removedWords = ['gago', 'tanga'];
 
-        const result = await filterRemovedWords({ originalAndAddedWords: mockCombinedFileContents, removedWords: mockWordsObject['removedWords'] });
+        const result = filterRemovedWords({ originalAndAddedWords: mockCombinedFileContents, removedWords: mockWordsObject['removedWords'] });
 
         expect(result).toEqual(mockCombinedFileContents);
-    })
+    });
 
 });
