@@ -226,7 +226,6 @@ export const savePuzzleWordsToFile = async (sortedWords: string[], filePath: str
 export const processPuzzleWords = async (filePaths: IFilePaths, dependencies = {readWordFiles, consolidateWordFiles, savePuzzleWordsToFile}): Promise<void> => {
     try {
 
-        
         const wordFiles = await dependencies.readWordFiles(filePaths);
         const consolidatedWordFiles = await dependencies.consolidateWordFiles(wordFiles);
         await dependencies.savePuzzleWordsToFile(consolidatedWordFiles, filePaths.puzzleWordsPath);
@@ -235,6 +234,7 @@ export const processPuzzleWords = async (filePaths: IFilePaths, dependencies = {
 
     } catch (error) {
         console.error( "Error processing puzzle words: ", error);
+        throw error
     }
 }
 

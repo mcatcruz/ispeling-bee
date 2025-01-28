@@ -37,7 +37,7 @@ describe('processPuzzleWords function', () => {
         mockSavePuzzleWordsToFile.mockResolvedValue();
     })
  
-    it.only("should integrate all functions and process puzzle words successfully", async () => {
+    it("should integrate all functions and process puzzle words successfully", async () => {
         const logSpy = jest.spyOn(console, "log").mockImplementation();
 
         await processPuzzleWords(FILE_PATHS, { readWordFiles: mockReadWordFiles, consolidateWordFiles: mockConsolidateWordFiles, savePuzzleWordsToFile: mockSavePuzzleWordsToFile });
@@ -50,25 +50,25 @@ describe('processPuzzleWords function', () => {
         logSpy.mockRestore();
     });
 
-    // it("should propagate errors from readWordFiles", async () => {
-    //     const mockReadError = new Error("Error reading word files");
-    //     mockReadWordFiles.mockRejectedValueOnce(mockReadError);
+    it("should propagate errors from readWordFiles", async () => {
+        const mockReadError = new Error("Error reading word files");
+        mockReadWordFiles.mockRejectedValueOnce(mockReadError);
 
-    //     await expect(processPuzzleWords()).rejects.toThrow(mockReadError);
-    // });
+        await expect(processPuzzleWords(FILE_PATHS,  { readWordFiles: mockReadWordFiles, consolidateWordFiles: mockConsolidateWordFiles, savePuzzleWordsToFile: mockSavePuzzleWordsToFile })).rejects.toThrow(mockReadError);
+    });
 
 
-    // it("should propagate errors from consolidateWordFiles", async () => {
-    //     const mockConsolidateError = new Error("Error consolidating word files");
-    //     mockConsolidateWordFiles.mockRejectedValueOnce(mockConsolidateError);
+    it("should propagate errors from consolidateWordFiles", async () => {
+        const mockConsolidateError = new Error("Error consolidating word files");
+        mockConsolidateWordFiles.mockRejectedValueOnce(mockConsolidateError);
 
-    //     await expect(processPuzzleWords()).rejects.toThrow(mockConsolidateError);
-    // });
+        await expect(processPuzzleWords(FILE_PATHS,  { readWordFiles: mockReadWordFiles, consolidateWordFiles: mockConsolidateWordFiles, savePuzzleWordsToFile: mockSavePuzzleWordsToFile })).rejects.toThrow(mockConsolidateError);
+    });
 
-    // it("should propagate errors from savePuzzleWordsToFile", async () => {
-    //     const mockSavePuzzleError = new Error("Error saving puzzle words to file");
-    //     mockSavePuzzleWordsToFile.mockRejectedValueOnce(mockSavePuzzleError);
+    it("should propagate errors from savePuzzleWordsToFile", async () => {
+        const mockSavePuzzleError = new Error("Error saving puzzle words to file");
+        mockSavePuzzleWordsToFile.mockRejectedValueOnce(mockSavePuzzleError);
 
-    //     await expect(processPuzzleWords()).rejects.toThrow(mockSavePuzzleError);
-    // });
+        await expect(processPuzzleWords(FILE_PATHS,  { readWordFiles: mockReadWordFiles, consolidateWordFiles: mockConsolidateWordFiles, savePuzzleWordsToFile: mockSavePuzzleWordsToFile })).rejects.toThrow(mockSavePuzzleError);
+    });
 })
