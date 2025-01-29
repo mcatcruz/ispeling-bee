@@ -3,7 +3,7 @@
 // Use setState to update state
 
 // Create a custom ReactContext hook so that we can hsare the states throughout the app
-import React, { createContext, useState, ReactNode } from 'react';
+import { createContext } from 'react';
 import { IGameContext, IGameState } from './config/interfaces';
 import { epoch } from './config/utils';
 
@@ -29,4 +29,4 @@ const initialState: IGameState = {
 
 export const GameContext = createContext<IGameContext | null>(null);
 
-export const GameProvivder = ()
+
