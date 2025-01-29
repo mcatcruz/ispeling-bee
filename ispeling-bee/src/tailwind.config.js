@@ -12,6 +12,9 @@ module.exports = {
         light: "#F5F5F5", // Light Gray
         accent: "#0077B6", // Accent Blue
       },
+      fontFamily: {
+        franklin: ["Libre Franklin", ...fontFamily.sans-serif]
+      }
     },
   },
   plugins: [],
