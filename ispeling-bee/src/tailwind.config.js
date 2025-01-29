@@ -13,7 +13,7 @@ module.exports = {
         accent: "#0077B6", // Accent Blue
       },
       fontFamily: {
-        franklin: ["Libre Franklin", ...fontFamily.sans-serif]
+        sans: ['var(--font-libre-franklin)', 'sans-serif']
       }
     },
   },
