@@ -25,35 +25,50 @@ export const GameProvider = ({ children } : { children: ReactNode }) => {
 
     const maxScore = useMemo(() => {
         return todaysAnswers.reduce((acc: number, word: string) => {
-            return acc + calculatePoints(word);
+            return acc + calculatePoints({ word })
         }, 0);
     }, [todaysAnswers]);
+
+    const minScore = 33; 
+    
+    const scoreLevels;
+
+    const correctGuessesArray;
+
+    const userScore;
+
+    const progressIndex;
+
+    const progressPercentage;
+
+    const themeColor;
+
+    const gameDateObj;
+
+    const gameDateString;
     
     const value: IGameContext = useMemo(() => ({
-        correctGuesses,
-        setCorrectGuesses,
-        todaysAnswers,
-        setTodaysAnswers,
-        todaysLetters,
-        setTodaysLetters,
-        todaysMiddleLetter,
-        setTodaysMiddleLetter,
-        gameDate,
-        setGameDate,
-        lastGameDate,
-        setLastGameDate,
-        yesterdaysAnswers,
-        setYesterdaysAnswers,
-        yesterdaysLetters,
-        setYesterdaysLetters,
-        yesterdaysMiddleLetter,
-        setYesterdaysMiddleLetter,
-        theme,
-        setTheme,
-        pointsMessages,
-        setPointsMessages
+        correctGuesses, setCorrectGuesses,
+        todaysAnswers, setTodaysAnswers,
+        todaysLetters, setTodaysLetters,
+        todaysMiddleLetter, setTodaysMiddleLetter,
+        gameDate, setGameDate,
+        lastGameDate, setLastGameDate,
+        yesterdaysAnswers, setYesterdaysAnswers,
+        yesterdaysLetters, setYesterdaysLetters,
+        yesterdaysMiddleLetter, setYesterdaysMiddleLetter,
+        theme, setTheme,
+        pointsMessages, setPointsMessages,
+
+        maxScore, minScore, scoreLevels,
+        correctGuessesArray, userScore,
+        progressIndex, progressPercentage,
+        themeColor, gameDateObj, gameDateString,
+
     }), [correctGuesses, todaysAnswers, todaysLetters, todaysMiddleLetter, gameDate, 
-        lastGameDate, yesterdaysAnswers, yesterdaysLetters, yesterdaysMiddleLetter, theme, pointsMessages]);
+        lastGameDate, yesterdaysAnswers, yesterdaysLetters, yesterdaysMiddleLetter, theme, 
+        pointsMessages, maxScore, minScore, scoreLevels, correctGuessesArray, userScore,
+        progressIndex, progressPercentage, themeColor, gameDateObj, gameDateString]);
 
     return (        
         <GameContext.Provider value={value}>

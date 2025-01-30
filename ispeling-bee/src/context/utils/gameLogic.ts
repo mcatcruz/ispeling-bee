@@ -1,16 +1,17 @@
 // Pure functions that do not rely on React state
 
-// from store.ts
-calculatePoints({ word }: { word: string }): number {
+
+const calculatePoints = ({ word }: { word: string }): number => {
     if (word.length === 4) return 1;
     if (this.isPangram({ word })) return word.length + 7;
     return word.length;
-  }
+  };
 
+// from store.ts
     // If word has 7 unique letters, assume pangram. Handles case where it is a pangram from yesterday.
-    isPangram({ word }: { word: string }): boolean {
-        return new Set(word).size === 7;
-      },
+isPangram({ word }: { word: string }): boolean {
+    return new Set(word).size === 7;
+  },
 
 // from utils.ts
 import { differenceInDays } from "date-fns";
@@ -111,6 +112,7 @@ const generateAnswerObjs = ({
 };
 
 export {
+  calculatePoints,
   chunk,
   epoch,
   generateAnswerObjs,
