@@ -25,4 +25,15 @@ export interface IGameContext extends IGameState {
     setYesterdaysMiddleLetter: (yesterdaysMiddleLetter: string) => void;
     setTheme: (theme: string) => void;
     setPointsMessages: (pointsMessages: { [key: number]: string }) => void;
+
+    maxScore: number;
+    minScore: number;
+    scoreLevels: Array<number>;
+    correctGuessesArray: Array<string>;
+    progressIndex: number;
+    progressPercentage: number;
+    userScore: number;
+    themeColor: string;
+    gameDateObj: Date;
+    gameDateString: string;
 }
