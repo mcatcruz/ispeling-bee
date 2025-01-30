@@ -1,9 +1,9 @@
 
 export interface IGameState {
     correctGuesses: Set<string>;
-    currentAnswers: Array<string>;
-    currentLetters: string;
-    currentMiddleLetter: string;
+    todaysAnswers: Array<string>;
+    todaysLetters: string;
+    todaysMiddleLetter: string;
     gameDate: Date;
     lastGameDate: Date;
     yesterdaysAnswers: Array<string>;
@@ -16,8 +16,8 @@ export interface IGameState {
 export interface IGameContext extends IGameState {
     setCorrectGuesses: (guesses: Set<string>) => void;
     setAnswers: (currentAnswers: Array<string>) => void;
-    setCurrentLetters: (currentLetters: string) => void;
-    setCurrentMiddleLetter: (currentMiddleLetter: string) => void;
+    setTodaysLetters: (currentLetters: string) => void;
+    setTodaysMiddleLetter: (currentMiddleLetter: string) => void;
     setGameDate: (gameDate: Date) => void;
     setLastGameDate: (lastGameDate: Date) => void;
     setYesterdaysAnswers: (yesterDaysAnswers: Array<string>) => void;
