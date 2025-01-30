@@ -1,9 +1,10 @@
-import React, { ReactNode, useState } from 'react';
+import React, { ReactNode, useState, useMemo } from 'react';
 import { GameContext } from './GameContext';
 import { epoch } from './config/config';
+import { calculatePoints } from './utils/gameLogic';
+import { IGameContext } from './config/interfaces';
 
-
-export const GameProvider = (({ children } : { children: ReactNode }) => {
+export const GameProvider = ({ children } : { children: ReactNode }) => {
     const [correctGuesses, setCorrectGuesses] = useState<Set<string>>(new Set());
     const [todaysAnswers, setTodaysAnswers] = useState<string[]>([]);
     const [todaysLetters, setTodaysLetters] = useState<string>('');
@@ -22,7 +23,13 @@ export const GameProvider = (({ children } : { children: ReactNode }) => {
         8: "amazing",
     })
 
-    const value = {
+    const maxScore = useMemo(() => {
+        return todaysAnswers.reduce((acc: number, word: string) => {
+            return acc + calculatePoints(word);
+        }, 0);
+    }, [todaysAnswers]);
+    
+    const value: IGameContext = useMemo(() => ({
         correctGuesses,
         setCorrectGuesses,
         todaysAnswers,
@@ -45,11 +52,12 @@ export const GameProvider = (({ children } : { children: ReactNode }) => {
         setTheme,
         pointsMessages,
         setPointsMessages
-    }
+    }), [correctGuesses, todaysAnswers, todaysLetters, todaysMiddleLetter, gameDate, 
+        lastGameDate, yesterdaysAnswers, yesterdaysLetters, yesterdaysMiddleLetter, theme, pointsMessages]);
 
     return (        
         <GameContext.Provider value={value}>
         {children}
         </GameContext.Provider>
     )
-});
+};
