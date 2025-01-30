@@ -4,7 +4,7 @@
 
 import { createContext } from 'react';
 import { IGameContext, IGameState } from './config/interfaces';
-import { epoch } from './config/utils';
+import { epoch } from './config/config';
 
 const initialState: IGameState = {
     correctGuesses: new Set(),
