@@ -20,6 +20,25 @@ const incrementDups = (arr: Array<number>): Array<number> => {
     return num;
   });
 };
+
+// from store.ts
+generatePointsMessage({
+  $t,
+  points,
+}: {
+  $t: Function;
+  points: number;
+}): string {
+  const message = this.pointsMessages[points] || "awesome";
+  return `${$t(`points.${message}`)}! +${points}`;
+},
+cellClassName({ row, columnIndex }: { row: any; columnIndex: number }) {
+  const word = row[columnIndex + 1];
+  if (word && this.isPangram({ word })) {
+    return "pangram";
+  }
+},
+},
 // from utils.ts
 import { differenceInDays } from "date-fns";
 import { Answer } from "./models/answer";
@@ -111,6 +130,7 @@ const generateAnswerObjs = ({
 
 export {
   calculatePoints,
+  isPangram,
   chunk,
   epoch,
   generateAnswerObjs,

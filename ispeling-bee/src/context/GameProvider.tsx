@@ -1,12 +1,11 @@
 import React, { ReactNode, useState, useMemo, useRef, useEffect } from 'react';
 import { GameContext } from './GameContext';
 import { epoch } from './config/config';
-import { calculatePoints, incrementDups } from './utils/gameLogic';
+import { calculatePoints, incrementDups, isPangram, generatePointsMessage } from './utils/gameLogic';
 import { IGameContext } from './config/interfaces';
 
 export const GameProvider = ({ children } : { children: ReactNode }) => {
     const MIN_SCORE: number = 33;
-    const PROGRESS_PERCENTAGES: number[] = [0, 20, 40, 50, 60, 70, 80, 90, 100];
 
     const [correctGuesses, setCorrectGuesses] = useState<Set<string>>(new Set());
     const [todaysAnswers, setTodaysAnswers] = useState<string[]>([]);
@@ -75,6 +74,7 @@ export const GameProvider = ({ children } : { children: ReactNode }) => {
     }, [scoreLevels, userScore]);
 
     useEffect(() => {
+        const PROGRESS_PERCENTAGES: number[] = [0, 20, 40, 50, 60, 70, 80, 90, 100];
         setProgressPercentage(PROGRESS_PERCENTAGES[progressIndex])
     }, [progressIndex]);
     
@@ -113,6 +113,42 @@ export const GameProvider = ({ children } : { children: ReactNode }) => {
         lastGameDate, yesterdaysAnswers, yesterdaysLetters, yesterdaysMiddleLetter, theme, 
         pointsMessages, MIN_SCORE, maxScore, scoreLevels, correctGuessesArray, userScore,
         progressIndex, progressPercentage, themeColor, gameDateObj, gameDateString]);
+    
+    const submitGuess = (guess: string) => {
+        if (guess.length < 4) {
+            showMessage("Too short!");
+            return;
+        };
+
+        if (!guess.includes(todaysMiddleLetter)) {
+            showMessage("Missing middle letter");
+            return; 
+        }
+        
+        if (!todaysAnswers.includes(guess)) {
+            showMessage("Not in word list");
+            return;
+        };
+        
+        if (correctGuesses.has(guess)) {
+            showMessage("Already found");
+            return;
+        }
+
+        correctGuesses.add(guess);
+
+        const points = calculatePoints({word: guess});
+        if (isPangram({word: guess})) {
+            showMessage(`Pangram! + ${points}`); 
+        } else {
+            showMessage(generatePointsMessage(points))
+        }
+    };
+    const startGame;
+    const setYesterdaysAnswersandLastGameDate;
+    const showMessage;
+
+
 
     return (        
         <GameContext.Provider value={value}>
