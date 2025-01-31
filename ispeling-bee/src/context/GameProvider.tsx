@@ -23,13 +23,13 @@ export const GameProvider = ({ children } : { children: ReactNode }) => {
         8: "amazing",
     })
 
-    const maxScore = useMemo(() => {
+    const maxScore: number = useMemo(() => {
         return todaysAnswers.reduce((acc: number, word: string) => {
             return acc + calculatePoints({ word })
         }, 0);
     }, [todaysAnswers]);
 
-    const minScore = 33; 
+    const minScore: number = 33; 
     
     const [scoreLevels, setScoreLevels] = useState<number[]>([]);
     const prevMaxScore = useRef<number | null>(null);
@@ -54,13 +54,17 @@ export const GameProvider = ({ children } : { children: ReactNode }) => {
         }
     }, [maxScore]);
 
-    
+    const correctGuessesArray: string[] = [...correctGuesses];
 
-    const correctGuessesArray;
+    const userScore = () => {
+        return correctGuessesArray.reduce(
+            (acc: number, word: string): number => {
+                return acc + calculatePoints({ word })
+            }, 0
+        )
+    };
 
-    const userScore;
-
-    const progressIndex;
+    const progressIndex = 
 
     const progressPercentage;
 
