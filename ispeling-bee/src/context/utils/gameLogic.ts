@@ -1,5 +1,9 @@
 // Pure functions that do not rely on React state
 
+import { IAnswer } from "../config/interfaces";
+import { epoch } from '../config/config';
+import { differenceInDays } from 'date-fns';
+
 const calculatePoints = (word: string): number => {
     if (word.length === 4) return 1;
     if (isPangram(word)) return word.length + 7;
@@ -33,6 +37,24 @@ const generatePointsMessage = (points: number): string => {
   const message = pointsMessages[points] || "Awesome";
   return `${message}! +${points}`;
 }
+
+const generateAnswerObj = ( {allAnswers , gameDate }: {
+  allAnswers: Array<IAnswer>;
+  gameDate: Date;
+}): { todaysAnswersObj: IAnswer; yesterdaysAnswersObj: IAnswer } => {
+  //  Use the number of days since `epoch` to determine today's and yesterday's puzzles.
+  const daysSinceEpoch = differenceInDays(gameDate, epoch);
+
+  // Pick today's puzzle:
+  // We use `% allAnswers.length` so that if we run out of puzzles, we start over from the beginning.
+  const todaysAnswersObj = allAnswers[daysSinceEpoch % allAnswers.length];
+
+  // Pick yesterday's puzzle:
+  // We subtract 1 from `daysSinceEpoch` to get the previous day's puzzle.
+  const yesterdaysAnswersObj = allAnswers[(daysSinceEpoch - 1) % allAnswers.length];
+
+  return { todaysAnswersObj, yesterdaysAnswersObj };
+};
 
 // from store.ts
 // cellClassName({ row, columnIndex }: { row: any; columnIndex: number }) {
@@ -108,27 +130,14 @@ const generatePointsMessage = (points: number): string => {
 //     return [e, arr2[i]];
 //   });
 // };
-// const generateAnswerObjs = ({
-//   allAnswers,
-//   gameDate,
-// }: {
-//   allAnswers: Array<Answer>;
-//   gameDate: Date;
-// }): { todaysAnswerObj: Answer; yesterdaysAnswerObj: Answer } => {
-//   // use days since arbitrary epoch to ensure yesterdays answers is always 1 behind todays.
-//   const daysSinceEpoch = differenceInDays(gameDate, epoch);
-//   // pick next puzzle input, % len puzzles to restart if out of index (circular)
-//   const todaysAnswerObj = allAnswers[daysSinceEpoch % allAnswers.length];
-//   const yesterdaysAnswerObj =
-//     allAnswers[(daysSinceEpoch - 1) % allAnswers.length];
-//   return { todaysAnswerObj, yesterdaysAnswerObj };
-// };
+
 
 export {
   calculatePoints,
   isPangram,
   incrementDups,
   generatePointsMessage,
+  generateAnswerObj
   // chunk,
   // generateAnswerObjs,
   // gridify,

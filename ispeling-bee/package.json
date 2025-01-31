@@ -10,9 +10,11 @@
     "test": "jest --env=node"
   },
   "dependencies": {
+    "date-fns": "^4.1.0",
     "next": "15.1.4",
     "react": "^19.0.0",
-    "react-dom": "^19.0.0"
+    "react-dom": "^19.0.0",
+    "save-dev": "^0.0.1-security"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",

@@ -3,22 +3,33 @@
 import React, { ReactNode, useState, useMemo, useRef, useEffect, useCallback } from 'react';
 import { GameContext } from './GameContext';
 import { epoch } from './config/config';
-import { calculatePoints, incrementDups, isPangram, generatePointsMessage } from './utils/gameLogic';
-import { IGameContext } from './config/interfaces';
+import { calculatePoints, incrementDups, isPangram, generatePointsMessage, generateAnswerObj } from './utils/gameLogic';
+import { IGameContext, IAnswer } from './config/interfaces';
 import { toast } from 'react-toastify';
+import { isSameDay, differenceInDays } from 'date-fns';
 
 export const GameProvider = ({ children } : { children: ReactNode }) => {
     const MIN_SCORE: number = 33;
 
     const [correctGuesses, setCorrectGuesses] = useState<Set<string>>(new Set());
-    const [todaysAnswers, setTodaysAnswers] = useState<string[]>([]);
+    const [todaysAnswersArray, setTodaysAnswersArray] = useState<string[]>([]);
     const [todaysLetters, setTodaysLetters] = useState<string>('');
     const [todaysMiddleLetter, setTodaysMiddleLetter] = useState<string>('');
+    const [todaysAnswersObj, setTodaysAnswersObj] = useState<IAnswer>({
+        answers: [],
+        letters: '',
+        middleLetter: '',
+    })
     const [gameDate, setGameDate] = useState<Date>(epoch);
     const [lastGameDate, setLastGameDate] = useState<Date>(new Date());
-    const [yesterdaysAnswers, setYesterdaysAnswers]= useState<string[]>([]);
+    const [yesterdaysAnswersArray, setYesterdaysAnswersArray]= useState<string[]>([]);
     const [yesterdaysLetters, setYesterdaysLetters] = useState<string>('');
     const [yesterdaysMiddleLetter, setYesterdaysMiddleLetter] = useState<string>('');
+    const [yesterdaysAnswersObj, setYesterdaysAnswersObj] = useState<IAnswer>({
+        answers: [],
+        letters: '',
+        middleLetter: '',
+    })
     const [theme, setTheme] = useState<string>('light');
     const [scoreLevels, setScoreLevels] = useState<number[]>([]);
     const [progressIndex, setProgressIndex] = useState(0);
@@ -28,10 +39,10 @@ export const GameProvider = ({ children } : { children: ReactNode }) => {
     const prevMaxScore = useRef<number | null>(null);
 
     const maxScore: number = useMemo(() => {
-        return todaysAnswers.reduce((acc: number, word: string) => {
+        return todaysAnswersArray.reduce((acc: number, word: string) => {
             return acc + calculatePoints(word)
         }, 0);
-    }, [todaysAnswers]);
+    }, [todaysAnswersArray]);
     
     const correctGuessesArray: string[] = useMemo(() => [...correctGuesses], [correctGuesses]);
     
@@ -95,7 +106,7 @@ export const GameProvider = ({ children } : { children: ReactNode }) => {
             return; 
         }
         
-        if (!todaysAnswers.includes(guess)) {
+        if (!todaysAnswersArray.includes(guess)) {
             showMessage("Not in word list", "error");
             return;
         };
@@ -119,24 +130,84 @@ export const GameProvider = ({ children } : { children: ReactNode }) => {
             showMessage(generatePointsMessage(points), "success")
         } 
         
-    }, [correctGuesses, todaysMiddleLetter, todaysAnswers, showMessage]);
+    }, [correctGuesses, todaysMiddleLetter, todaysAnswersArray, showMessage]);
 
-    // const startGame;
-    // const setYesterdaysAnswersAndLastGameDate;
+    const startGame = ({ allAnswers }: { allAnswers: Array<IAnswer>}) => {
+        const today = new Date();
+
+        if (isSameDay(gameDate, today)) return false;
+
+        // Store current gameDate before updating
+        const prevLastGameDate = gameDate;
+
+        // Reset state for a new game
+        setGameDate(today);
+        setLastGameDate(prevLastGameDate);
+        setCorrectGuesses(new Set());
+
+        // Generate today's and yesterday's answer objects
+        const { todaysAnswersObj, yesterdaysAnswersObj } = generateAnswerObj({
+            allAnswers,
+            gameDate: today
+        })
+
+        // Fixes a bug where yesterday’s answers were incorrect on the first of the month.
+        // Set today's and yesterday's answer objects
+        updateYesterdaysAnswers(yesterdaysAnswersObj);
+
+        updateTodaysAnswers(todaysAnswersObj)
+
+    };
+
+    // (Quick & Dirty Debugging lastGameDate accuracy)
+    useEffect(() => {
+        console.log("lastGameDate updated:", lastGameDate);
+    }, [lastGameDate]);
+    
+    const updateYesterdaysAnswers = useCallback((yesterdaysAnswersObj: IAnswer) => { 
+            if (differenceInDays(gameDate, lastGameDate) === 1) {
+                // Use today's answers if yesterday's data is missing (bug fix for month transitions)
+                setYesterdaysAnswersArray(todaysAnswersArray);
+                setYesterdaysLetters(todaysLetters);
+                setYesterdaysMiddleLetter(todaysMiddleLetter);
+                setYesterdaysAnswersObj({
+                    answers: yesterdaysAnswersArray,
+                    letters: yesterdaysLetters,
+                    middleLetter: yesterdaysMiddleLetter
+                })
+            } else {
+                // Otherwise, use the provided yesterdaysAnswerObj
+                setYesterdaysAnswersArray(yesterdaysAnswersObj.answers);
+                setYesterdaysLetters(yesterdaysAnswersObj.letters);
+                setYesterdaysMiddleLetter(yesterdaysAnswersObj.middleLetter);
+                setYesterdaysAnswersObj(yesterdaysAnswersObj);
+            }
+    }, [gameDate, lastGameDate, todaysAnswersArray, todaysLetters, todaysMiddleLetter, 
+        yesterdaysAnswersArray, yesterdaysLetters, yesterdaysMiddleLetter]);
+
+    const updateTodaysAnswers = useCallback((todaysAnswersObj: IAnswer) => {
+        // Set today's answers
+        setTodaysAnswersArray(todaysAnswersObj.answers);
+        setTodaysLetters(todaysAnswersObj.letters);
+        setTodaysMiddleLetter(todaysAnswersObj.middleLetter);
+        setTodaysAnswersObj(todaysAnswersObj);
+    }, [])
 
 
 
     const value: IGameContext = useMemo(() => ({
         // State variables
         correctGuesses, setCorrectGuesses,
-        todaysAnswers, setTodaysAnswers,
+        todaysAnswersArray, setTodaysAnswersArray,
         todaysLetters, setTodaysLetters,
         todaysMiddleLetter, setTodaysMiddleLetter,
+        todaysAnswersObj, setTodaysAnswersObj,
         gameDate, setGameDate,
         lastGameDate, setLastGameDate,
-        yesterdaysAnswers, setYesterdaysAnswers,
+        yesterdaysAnswersArray, setYesterdaysAnswersArray,
         yesterdaysLetters, setYesterdaysLetters,
         yesterdaysMiddleLetter, setYesterdaysMiddleLetter,
+        yesterdaysAnswersObj, setYesterdaysAnswersObj,
         theme, setTheme,
         progressIndex, setProgressIndex,
         progressPercentage, setProgressPercentage,
@@ -153,15 +224,16 @@ export const GameProvider = ({ children } : { children: ReactNode }) => {
         // Actions
         submitGuess,
         showMessage,
+        startGame,
+        updateYesterdaysAnswers,
+        updateTodaysAnswers
 
-    }), [correctGuesses, todaysAnswers, todaysLetters, todaysMiddleLetter, gameDate, 
-        lastGameDate, yesterdaysAnswers, yesterdaysLetters, yesterdaysMiddleLetter, theme, 
-        MIN_SCORE, maxScore, scoreLevels, correctGuessesArray, userScore,
-        progressIndex, progressPercentage, themeColor, gameDateObj, gameDateString, submitGuess, 
-        showMessage]);
+    }), [correctGuesses, todaysAnswersArray, todaysLetters, todaysMiddleLetter, todaysAnswersObj, gameDate, 
+        lastGameDate, yesterdaysAnswersArray, yesterdaysLetters, yesterdaysMiddleLetter, yesterdaysAnswersObj, 
+        theme, MIN_SCORE, maxScore, scoreLevels, correctGuessesArray, userScore,
+        progressIndex, progressPercentage, themeColor, gameDateObj, gameDateString, 
+        submitGuess, showMessage, startGame, updateYesterdaysAnswers, updateTodaysAnswers]);
     
-
-
 
     return (        
         <GameContext.Provider value={value}>
