@@ -3,16 +3,25 @@
 
 const calculatePoints = ({ word }: { word: string }): number => {
     if (word.length === 4) return 1;
-    if (this.isPangram({ word })) return word.length + 7;
+    if (isPangram({ word })) return word.length + 7;
     return word.length;
   };
 
-// from store.ts
     // If word has 7 unique letters, assume pangram. Handles case where it is a pangram from yesterday.
-isPangram({ word }: { word: string }): boolean {
+const isPangram = ({ word }: { word: string }): boolean => {
     return new Set(word).size === 7;
-  },
+  };
 
+const incrementDups = (arr: Array<number>): Array<number> => {
+  const encounters = new Set();
+  return arr.map((num) => {
+    while (encounters.has(num)) {
+      num += 1;
+    }
+    encounters.add(num);
+    return num;
+  });
+};
 // from utils.ts
 import { differenceInDays } from "date-fns";
 import { Answer } from "./models/answer";
@@ -81,16 +90,7 @@ const zip = (arr1: Array<any>, arr2: Array<any>): Array<any> => {
   });
 };
 
-const incrementDups = (arr: Array<number>): Array<number> => {
-  const encounters = new Set();
-  return arr.map((num) => {
-    while (encounters.has(num)) {
-      num += 1;
-    }
-    encounters.add(num);
-    return num;
-  });
-};
+
 
 // year game started, not released until mid-year so no issue using as epoch
 const epoch = new Date("2022-01-01");

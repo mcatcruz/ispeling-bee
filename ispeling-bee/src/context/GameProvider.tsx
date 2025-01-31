@@ -1,7 +1,7 @@
-import React, { ReactNode, useState, useMemo } from 'react';
+import React, { ReactNode, useState, useMemo, useRef, useEffect } from 'react';
 import { GameContext } from './GameContext';
 import { epoch } from './config/config';
-import { calculatePoints } from './utils/gameLogic';
+import { calculatePoints, incrementDups } from './utils/gameLogic';
 import { IGameContext } from './config/interfaces';
 
 export const GameProvider = ({ children } : { children: ReactNode }) => {
@@ -31,7 +31,30 @@ export const GameProvider = ({ children } : { children: ReactNode }) => {
 
     const minScore = 33; 
     
-    const scoreLevels;
+    const [scoreLevels, setScoreLevels] = useState<number[]>([]);
+    const prevMaxScore = useRef<number | null>(null);
+
+    useEffect(() => {
+        if (prevMaxScore.current !== maxScore ) {
+            const levels = [
+                0,
+                5,
+                Math.floor(maxScore * 0.1),
+                Math.floor(maxScore * 0.2),
+                Math.floor(maxScore * 0.3),
+                Math.floor(maxScore * 0.4),
+                Math.floor(maxScore * 0.5),
+                Math.floor(maxScore * 0.55),
+                Math.floor(maxScore * 0.6),
+            ].sort((a, b) => a - b);
+
+            setScoreLevels(incrementDups(levels)); // Ensures unique levels
+            prevMaxScore.current = maxScore; // Store last computed maxScore
+
+        }
+    }, [maxScore]);
+
+    
 
     const correctGuessesArray;
 
