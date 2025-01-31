@@ -5,6 +5,9 @@ import { calculatePoints, incrementDups } from './utils/gameLogic';
 import { IGameContext } from './config/interfaces';
 
 export const GameProvider = ({ children } : { children: ReactNode }) => {
+    const MIN_SCORE: number = 33;
+    const PROGRESS_PERCENTAGES: number[] = [0, 20, 40, 50, 60, 70, 80, 90, 100];
+
     const [correctGuesses, setCorrectGuesses] = useState<Set<string>>(new Set());
     const [todaysAnswers, setTodaysAnswers] = useState<string[]>([]);
     const [todaysLetters, setTodaysLetters] = useState<string>('');
@@ -28,8 +31,6 @@ export const GameProvider = ({ children } : { children: ReactNode }) => {
             return acc + calculatePoints({ word })
         }, 0);
     }, [todaysAnswers]);
-
-    const minScore: number = 33; 
     
     const [scoreLevels, setScoreLevels] = useState<number[]>([]);
     const prevMaxScore = useRef<number | null>(null);
@@ -56,18 +57,18 @@ export const GameProvider = ({ children } : { children: ReactNode }) => {
 
     const correctGuessesArray: string[] = [...correctGuesses];
 
-    const userScore = () => {
+    const userScore: number = useMemo(() => {
         return correctGuessesArray.reduce(
             (acc: number, word: string): number => {
                 return acc + calculatePoints({ word })
             }, 0
         )
-    };
+    }, [correctGuessesArray]);
 
-    const progressIndex = 
+    const progressIndex = scoreLevels.filter((v: number) => v <= userScore).length - 1
 
-    const progressPercentage;
-
+    const progressPercentage: number = PROGRESS_PERCENTAGES[progressIndex]; 
+    
     const themeColor;
 
     const gameDateObj;
