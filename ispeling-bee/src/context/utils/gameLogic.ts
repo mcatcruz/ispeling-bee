@@ -21,11 +21,18 @@ const incrementDups = (arr: Array<number>): Array<number> => {
   });
 };
 
+const pointsMessages: { [key: number]: string } = {
+  1: "Good",
+  5: "Nice",
+  6: "Great",
+  7: "Excellent",
+  8: "Amazing",
+};
 
 const generatePointsMessage = (points: number): string => {
-  const message = pointsMessages[points] || "awesome";
+  const message = pointsMessages[points] || "Awesome";
   return `${message}! +${points}`;
-},
+}
 
 // from store.ts
 // cellClassName({ row, columnIndex }: { row: any; columnIndex: number }) {

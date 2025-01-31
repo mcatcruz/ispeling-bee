@@ -20,13 +20,6 @@ export const GameProvider = ({ children } : { children: ReactNode }) => {
     const [yesterdaysLetters, setYesterdaysLetters] = useState<string>('');
     const [yesterdaysMiddleLetter, setYesterdaysMiddleLetter] = useState<string>('');
     const [theme, setTheme] = useState<string>('light');
-    const [pointsMessages, setPointsMessages] = useState<{ [key: number]: string }>({
-        1: "good",
-        5: "nice",
-        6: "great",
-        7: "excellent",
-        8: "amazing",
-    })
     const [scoreLevels, setScoreLevels] = useState<number[]>([]);
     const [progressIndex, setProgressIndex] = useState(0);
     const [progressPercentage, setProgressPercentage] = useState(0);
@@ -145,7 +138,6 @@ export const GameProvider = ({ children } : { children: ReactNode }) => {
         yesterdaysLetters, setYesterdaysLetters,
         yesterdaysMiddleLetter, setYesterdaysMiddleLetter,
         theme, setTheme,
-        pointsMessages, setPointsMessages,
         progressIndex, setProgressIndex,
         progressPercentage, setProgressPercentage,
         scoreLevels, setScoreLevels,
@@ -164,7 +156,7 @@ export const GameProvider = ({ children } : { children: ReactNode }) => {
 
     }), [correctGuesses, todaysAnswers, todaysLetters, todaysMiddleLetter, gameDate, 
         lastGameDate, yesterdaysAnswers, yesterdaysLetters, yesterdaysMiddleLetter, theme, 
-        pointsMessages, MIN_SCORE, maxScore, scoreLevels, correctGuessesArray, userScore,
+        MIN_SCORE, maxScore, scoreLevels, correctGuessesArray, userScore,
         progressIndex, progressPercentage, themeColor, gameDateObj, gameDateString, submitGuess, 
         showMessage]);
     

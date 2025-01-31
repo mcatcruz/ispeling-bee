@@ -10,7 +10,6 @@ export interface IGameState {
     yesterdaysLetters: string;
     yesterdaysMiddleLetter: string;
     theme: string; // TODO
-    pointsMessages: { [key: number]: string };
 };
 
 export interface IGameContext extends IGameState {
@@ -24,7 +23,6 @@ export interface IGameContext extends IGameState {
     setYesterdaysLetters: (yesterdaysLetters: string) => void;
     setYesterdaysMiddleLetter: (yesterdaysMiddleLetter: string) => void;
     setTheme: (theme: string) => void;
-    setPointsMessages: (pointsMessages: { [key: number]: string }) => void;
     setProgressIndex: (progressIndex: number) => void;
     setProgressPercentage: (progressPercentage: number) => void;
     setScoreLevels: (scoreLevels: Array<number>) => void;

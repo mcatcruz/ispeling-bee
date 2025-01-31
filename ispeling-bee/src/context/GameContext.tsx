@@ -19,13 +19,6 @@ const initialState: IGameState = {
     yesterdaysLetters: '',
     yesterdaysMiddleLetter: '',
     theme: 'light', // TODO
-    pointsMessages: {
-        1: "good",
-        5: "nice",
-        6: "great",
-        7: "excellent",
-        8: "amazing",
-    },
 }
 
 export const GameContext = createContext<IGameContext | null>(null);
