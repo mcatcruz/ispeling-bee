@@ -25,6 +25,12 @@ export const GameProvider = ({ children } : { children: ReactNode }) => {
         7: "excellent",
         8: "amazing",
     })
+    const [scoreLevels, setScoreLevels] = useState<number[]>([]);
+    const [progressIndex, setProgressIndex] = useState(0);
+    const [progressPercentage, setProgressPercentage] = useState(0);
+    const [gameDateString, setGameDateString] = useState('');
+    const [gameDateObj, setGameDateObj] = useState(new Date());
+    const prevMaxScore = useRef<number | null>(null);
 
     const maxScore: number = useMemo(() => {
         return todaysAnswers.reduce((acc: number, word: string) => {
@@ -32,8 +38,17 @@ export const GameProvider = ({ children } : { children: ReactNode }) => {
         }, 0);
     }, [todaysAnswers]);
     
-    const [scoreLevels, setScoreLevels] = useState<number[]>([]);
-    const prevMaxScore = useRef<number | null>(null);
+    const correctGuessesArray: string[] = useMemo(() => [...correctGuesses], [correctGuesses]);
+    
+    const userScore: number = useMemo(() => {
+        return correctGuessesArray.reduce(
+            (acc: number, word: string): number => {
+                return acc + calculatePoints({ word })
+            }, 0
+        )
+    }, [correctGuessesArray]);
+
+    useEffect(() => setGameDateObj(typeof gameDate === "string" ? new Date(gameDate) : gameDate), [gameDate]);
 
     useEffect(() => {
         if (prevMaxScore.current !== maxScore ) {
@@ -55,27 +70,22 @@ export const GameProvider = ({ children } : { children: ReactNode }) => {
         }
     }, [maxScore]);
 
-    const correctGuessesArray: string[] = useMemo(() => [...correctGuesses], [correctGuesses]);
+    useEffect(() => {
+            setProgressIndex(scoreLevels.filter((v: number) => v <= userScore).length - 1);
+    }, [scoreLevels, userScore]);
 
-    const userScore: number = useMemo(() => {
-        return correctGuessesArray.reduce(
-            (acc: number, word: string): number => {
-                return acc + calculatePoints({ word })
-            }, 0
-        )
-    }, [correctGuessesArray]);
-
-    const progressIndex = scoreLevels.filter((v: number) => v <= userScore).length - 1
-
-    const progressPercentage: number = PROGRESS_PERCENTAGES[progressIndex]; 
+    useEffect(() => {
+        setProgressPercentage(PROGRESS_PERCENTAGES[progressIndex])
+    }, [progressIndex]);
     
+    useEffect(() => {
+        setGameDateString(gameDateObj.toISOString().split("T")[0])
+    }, [gameDateObj]); 
+
     const themeColor: string = theme === "light" ? "white" : "#1c1b22";
-
-    const gameDateObj: Date = useMemo(() => typeof gameDate === "string" ? new Date(gameDate) : gameDate, [gameDate]);
-
-    const gameDateString: string = gameDate.toISOString().split("T")[0];
     
     const value: IGameContext = useMemo(() => ({
+        // State variables
         correctGuesses, setCorrectGuesses,
         todaysAnswers, setTodaysAnswers,
         todaysLetters, setTodaysLetters,
@@ -87,11 +97,17 @@ export const GameProvider = ({ children } : { children: ReactNode }) => {
         yesterdaysMiddleLetter, setYesterdaysMiddleLetter,
         theme, setTheme,
         pointsMessages, setPointsMessages,
+        progressIndex, setProgressIndex,
+        progressPercentage, setProgressPercentage,
+        scoreLevels, setScoreLevels,
+        gameDateString, setGameDateString,
+        gameDateObj, setGameDateObj,
 
-        MIN_SCORE, maxScore, scoreLevels,
+
+        // Calculated values
+        MIN_SCORE, maxScore,
         correctGuessesArray, userScore,
-        progressIndex, progressPercentage,
-        themeColor, gameDateObj, gameDateString,
+        themeColor,
 
     }), [correctGuesses, todaysAnswers, todaysLetters, todaysMiddleLetter, gameDate, 
         lastGameDate, yesterdaysAnswers, yesterdaysLetters, yesterdaysMiddleLetter, theme, 

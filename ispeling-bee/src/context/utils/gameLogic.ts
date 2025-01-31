@@ -1,13 +1,11 @@
 // Pure functions that do not rely on React state
 
-
 const calculatePoints = ({ word }: { word: string }): number => {
     if (word.length === 4) return 1;
     if (isPangram({ word })) return word.length + 7;
     return word.length;
   };
 
-    // If word has 7 unique letters, assume pangram. Handles case where it is a pangram from yesterday.
 const isPangram = ({ word }: { word: string }): boolean => {
     return new Set(word).size === 7;
   };
