@@ -3,7 +3,7 @@
 import { useContext } from 'react';
 import { GameContext } from '@/context/GameContext';
 
-const MessageTest = () => {
+const ShowMessageText = () => {
     const gameContext = useContext(GameContext);
 
     if (!gameContext) return null;
@@ -28,4 +28,4 @@ const MessageTest = () => {
     );
 };
 
-export default MessageTest;
+export default ShowMessageText;

@@ -1,4 +1,5 @@
-import Image from "next/image";
+'use client';
+
 import '@/styles/globals.css';
 import ShowMessageText from '@/components/ShowMessageText';
 

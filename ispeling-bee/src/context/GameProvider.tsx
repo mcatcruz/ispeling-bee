@@ -1,3 +1,5 @@
+'use client';
+
 import React, { ReactNode, useState, useMemo, useRef, useEffect, useCallback } from 'react';
 import { GameContext } from './GameContext';
 import { epoch } from './config/config';

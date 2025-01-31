@@ -2,6 +2,8 @@
 // Use useState to sync state variables with local storage
 // Use setState to update state
 
+'use client';
+
 import { createContext } from 'react';
 import { IGameContext, IGameState } from './config/interfaces';
 import { epoch } from './config/config';
