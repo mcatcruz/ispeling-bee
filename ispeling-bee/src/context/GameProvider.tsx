@@ -132,7 +132,30 @@ export const GameProvider = ({ children } : { children: ReactNode }) => {
         
     }, [correctGuesses, todaysMiddleLetter, todaysAnswersArray, showMessage]);
 
-    const startGame = ({ allAnswers }: { allAnswers: Array<IAnswer>}) => {
+    const updateYesterdaysAnswers = useCallback((yesterdaysAnswersObj: IAnswer) => { 
+        if (differenceInDays(gameDate, lastGameDate) === 1) {
+            // Use today's answers if yesterday's data is missing (bug fix for month transitions)
+            setYesterdaysAnswersArray(todaysAnswersArray);
+            setYesterdaysLetters(todaysLetters);
+            setYesterdaysMiddleLetter(todaysMiddleLetter);
+            setYesterdaysAnswersObj(todaysAnswersObj)
+        } else {
+            // Otherwise, use the provided yesterdaysAnswerObj
+            setYesterdaysAnswersArray(yesterdaysAnswersObj.answers);
+            setYesterdaysLetters(yesterdaysAnswersObj.letters);
+            setYesterdaysMiddleLetter(yesterdaysAnswersObj.middleLetter);
+            setYesterdaysAnswersObj(yesterdaysAnswersObj);
+        }
+    }, [gameDate, lastGameDate, todaysAnswersArray, todaysLetters, todaysMiddleLetter, todaysAnswersObj]);
+
+    const updateTodaysAnswers = useCallback((todaysAnswersObj: IAnswer) => {
+        setTodaysAnswersArray(todaysAnswersObj.answers);
+        setTodaysLetters(todaysAnswersObj.letters);
+        setTodaysMiddleLetter(todaysAnswersObj.middleLetter);
+        setTodaysAnswersObj(todaysAnswersObj);
+    }, [])
+
+    const startGame = useCallback(({ allAnswers }: { allAnswers: Array<IAnswer>}) => {
         const today = new Date();
 
         if (isSameDay(gameDate, today)) return false;
@@ -157,43 +180,12 @@ export const GameProvider = ({ children } : { children: ReactNode }) => {
 
         updateTodaysAnswers(todaysAnswersObj)
 
-    };
+    }, [gameDate, updateYesterdaysAnswers, updateTodaysAnswers]);
 
     // (Quick & Dirty Debugging lastGameDate accuracy)
     useEffect(() => {
         console.log("lastGameDate updated:", lastGameDate);
     }, [lastGameDate]);
-    
-    const updateYesterdaysAnswers = useCallback((yesterdaysAnswersObj: IAnswer) => { 
-            if (differenceInDays(gameDate, lastGameDate) === 1) {
-                // Use today's answers if yesterday's data is missing (bug fix for month transitions)
-                setYesterdaysAnswersArray(todaysAnswersArray);
-                setYesterdaysLetters(todaysLetters);
-                setYesterdaysMiddleLetter(todaysMiddleLetter);
-                setYesterdaysAnswersObj({
-                    answers: yesterdaysAnswersArray,
-                    letters: yesterdaysLetters,
-                    middleLetter: yesterdaysMiddleLetter
-                })
-            } else {
-                // Otherwise, use the provided yesterdaysAnswerObj
-                setYesterdaysAnswersArray(yesterdaysAnswersObj.answers);
-                setYesterdaysLetters(yesterdaysAnswersObj.letters);
-                setYesterdaysMiddleLetter(yesterdaysAnswersObj.middleLetter);
-                setYesterdaysAnswersObj(yesterdaysAnswersObj);
-            }
-    }, [gameDate, lastGameDate, todaysAnswersArray, todaysLetters, todaysMiddleLetter, 
-        yesterdaysAnswersArray, yesterdaysLetters, yesterdaysMiddleLetter]);
-
-    const updateTodaysAnswers = useCallback((todaysAnswersObj: IAnswer) => {
-        // Set today's answers
-        setTodaysAnswersArray(todaysAnswersObj.answers);
-        setTodaysLetters(todaysAnswersObj.letters);
-        setTodaysMiddleLetter(todaysAnswersObj.middleLetter);
-        setTodaysAnswersObj(todaysAnswersObj);
-    }, [])
-
-
 
     const value: IGameContext = useMemo(() => ({
         // State variables
