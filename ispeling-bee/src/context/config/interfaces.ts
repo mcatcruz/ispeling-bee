@@ -39,6 +39,6 @@ export interface IGameContext extends IGameState {
     gameDateObj: Date;
     gameDateString: string;
 
-    submitGuess: (guess: string) => string;
-    showMessage: (message: string, type: string) => void;
+    submitGuess: (guess: string) => void;
+    showMessage: (message: string, type?: "success" | "error") => void;
 }
