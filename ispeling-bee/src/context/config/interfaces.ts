@@ -40,4 +40,6 @@ export interface IGameContext extends IGameState {
     themeColor: string;
     gameDateObj: Date;
     gameDateString: string;
+
+    submitGuess: (guess: string) => string;
 }

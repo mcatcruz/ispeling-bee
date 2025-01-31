@@ -1,4 +1,4 @@
-import React, { ReactNode, useState, useMemo, useRef, useEffect } from 'react';
+import React, { ReactNode, useState, useMemo, useRef, useEffect, useCallback } from 'react';
 import { GameContext } from './GameContext';
 import { epoch } from './config/config';
 import { calculatePoints, incrementDups, isPangram, generatePointsMessage } from './utils/gameLogic';
@@ -84,6 +84,47 @@ export const GameProvider = ({ children } : { children: ReactNode }) => {
 
     const themeColor: string = theme === "light" ? "white" : "#1c1b22";
     
+    const submitGuess = useCallback((guess: string) => {
+        if (guess.length < 4) {
+            showMessage("Too short!");
+            return;
+        };
+
+        if (!guess.includes(todaysMiddleLetter)) {
+            showMessage("Missing middle letter");
+            return; 
+        }
+        
+        if (!todaysAnswers.includes(guess)) {
+            showMessage("Not in word list");
+            return;
+        };
+        
+        if (correctGuesses.has(guess)) {
+            showMessage("Already found");
+            return;
+        }
+
+        setCorrectGuesses((prevGuesses: Set<string>) => {
+            const newGuesses: Set<string> = new Set(prevGuesses);
+            newGuesses.add(guess);
+            return newGuesses;
+        });
+
+        const points: number = calculatePoints({word: guess});
+
+        if (isPangram({word: guess})) {
+            showMessage(`Pangram! + ${points}`); 
+        } else {
+            showMessage(generatePointsMessage(points))
+        }
+    });
+
+    const startGame;
+    const setYesterdaysAnswersandLastGameDate;
+    const showMessage;
+
+
     const value: IGameContext = useMemo(() => ({
         // State variables
         correctGuesses, setCorrectGuesses,
@@ -107,46 +148,16 @@ export const GameProvider = ({ children } : { children: ReactNode }) => {
         // Calculated values
         MIN_SCORE, maxScore,
         correctGuessesArray, userScore,
-        themeColor,
+        themeColor, 
+        
+        // Actions
+        submitGuess,
 
     }), [correctGuesses, todaysAnswers, todaysLetters, todaysMiddleLetter, gameDate, 
         lastGameDate, yesterdaysAnswers, yesterdaysLetters, yesterdaysMiddleLetter, theme, 
         pointsMessages, MIN_SCORE, maxScore, scoreLevels, correctGuessesArray, userScore,
-        progressIndex, progressPercentage, themeColor, gameDateObj, gameDateString]);
+        progressIndex, progressPercentage, themeColor, gameDateObj, gameDateString, submitGuess]);
     
-    const submitGuess = (guess: string) => {
-        if (guess.length < 4) {
-            showMessage("Too short!");
-            return;
-        };
-
-        if (!guess.includes(todaysMiddleLetter)) {
-            showMessage("Missing middle letter");
-            return; 
-        }
-        
-        if (!todaysAnswers.includes(guess)) {
-            showMessage("Not in word list");
-            return;
-        };
-        
-        if (correctGuesses.has(guess)) {
-            showMessage("Already found");
-            return;
-        }
-
-        correctGuesses.add(guess);
-
-        const points = calculatePoints({word: guess});
-        if (isPangram({word: guess})) {
-            showMessage(`Pangram! + ${points}`); 
-        } else {
-            showMessage(generatePointsMessage(points))
-        }
-    };
-    const startGame;
-    const setYesterdaysAnswersandLastGameDate;
-    const showMessage;
 
 
 
