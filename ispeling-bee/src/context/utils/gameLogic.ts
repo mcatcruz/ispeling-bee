@@ -21,17 +21,13 @@ const incrementDups = (arr: Array<number>): Array<number> => {
   });
 };
 
-// from store.ts
-generatePointsMessage({
-  $t,
-  points,
-}: {
-  $t: Function;
-  points: number;
-}): string {
-  const message = this.pointsMessages[points] || "awesome";
-  return `${$t(`points.${message}`)}! +${points}`;
+
+const generatePointsMessage = (points: number): string => {
+  const message = pointsMessages[points] || "awesome";
+  return `${message}! +${points}`;
 },
+
+// from store.ts
 cellClassName({ row, columnIndex }: { row: any; columnIndex: number }) {
   const word = row[columnIndex + 1];
   if (word && this.isPangram({ word })) {

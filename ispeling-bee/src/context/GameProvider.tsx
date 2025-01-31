@@ -85,28 +85,28 @@ export const GameProvider = ({ children } : { children: ReactNode }) => {
 
     const themeColor: string = theme === "light" ? "white" : "#1c1b22";
     
-    const showMessage = () => {
-
-    };
+    const showMessage = useCallback((message: string, type: "success" | "error" = "success") => {
+        toast[type](message);
+    }, []);
 
     const submitGuess = useCallback((guess: string) => {
         if (guess.length < 4) {
-            showMessage("Too short!");
+            showMessage("Too short!", "error");
             return;
         };
 
         if (!guess.includes(todaysMiddleLetter)) {
-            showMessage("Missing middle letter");
+            showMessage("Missing middle letter", "error");
             return; 
         }
         
         if (!todaysAnswers.includes(guess)) {
-            showMessage("Not in word list");
+            showMessage("Not in word list", "error");
             return;
         };
         
         if (correctGuesses.has(guess)) {
-            showMessage("Already found");
+            showMessage("Already found", "error");
             return;
         }
 
@@ -119,9 +119,9 @@ export const GameProvider = ({ children } : { children: ReactNode }) => {
         const points: number = calculatePoints(guess);
 
         if (isPangram(guess)) {
-            showMessage(`Pangram! + ${points}`)
+            showMessage(`Pangram! +${points}`, "success")
         } else {
-            showMessage(generatePointsMessage(points))
+            showMessage(generatePointsMessage(points), "success")
         } 
         
     }, [correctGuesses, todaysMiddleLetter, todaysAnswers, showMessage]);
