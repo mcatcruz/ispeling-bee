@@ -27,7 +27,6 @@ export interface IGameContext extends IGameState {
     setPointsMessages: (pointsMessages: { [key: number]: string }) => void;
 
     maxScore: number;
-    minScore: number;
     scoreLevels: Array<number>;
     correctGuessesArray: Array<string>;
     progressIndex: number;

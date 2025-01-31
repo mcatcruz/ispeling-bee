@@ -55,7 +55,7 @@ export const GameProvider = ({ children } : { children: ReactNode }) => {
         }
     }, [maxScore]);
 
-    const correctGuessesArray: string[] = [...correctGuesses];
+    const correctGuessesArray: string[] = useMemo(() => [...correctGuesses], [correctGuesses]);
 
     const userScore: number = useMemo(() => {
         return correctGuessesArray.reduce(
@@ -69,11 +69,11 @@ export const GameProvider = ({ children } : { children: ReactNode }) => {
 
     const progressPercentage: number = PROGRESS_PERCENTAGES[progressIndex]; 
     
-    const themeColor;
+    const themeColor: string = theme === "light" ? "white" : "#1c1b22";
 
-    const gameDateObj;
+    const gameDateObj: Date = useMemo(() => typeof gameDate === "string" ? new Date(gameDate) : gameDate, [gameDate]);
 
-    const gameDateString;
+    const gameDateString: string = gameDate.toISOString().split("T")[0];
     
     const value: IGameContext = useMemo(() => ({
         correctGuesses, setCorrectGuesses,
@@ -88,14 +88,14 @@ export const GameProvider = ({ children } : { children: ReactNode }) => {
         theme, setTheme,
         pointsMessages, setPointsMessages,
 
-        maxScore, minScore, scoreLevels,
+        MIN_SCORE, maxScore, scoreLevels,
         correctGuessesArray, userScore,
         progressIndex, progressPercentage,
         themeColor, gameDateObj, gameDateString,
 
     }), [correctGuesses, todaysAnswers, todaysLetters, todaysMiddleLetter, gameDate, 
         lastGameDate, yesterdaysAnswers, yesterdaysLetters, yesterdaysMiddleLetter, theme, 
-        pointsMessages, maxScore, minScore, scoreLevels, correctGuessesArray, userScore,
+        pointsMessages, MIN_SCORE, maxScore, scoreLevels, correctGuessesArray, userScore,
         progressIndex, progressPercentage, themeColor, gameDateObj, gameDateString]);
 
     return (        
