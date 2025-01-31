@@ -1,12 +1,12 @@
 // Pure functions that do not rely on React state
 
-const calculatePoints = ({ word }: { word: string }): number => {
+const calculatePoints = (word: string): number => {
     if (word.length === 4) return 1;
-    if (isPangram({ word })) return word.length + 7;
+    if (isPangram(word)) return word.length + 7;
     return word.length;
   };
 
-const isPangram = ({ word }: { word: string }): boolean => {
+const isPangram = (word: string): boolean => {
     return new Set(word).size === 7;
   };
 

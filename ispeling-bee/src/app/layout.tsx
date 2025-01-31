@@ -1,6 +1,9 @@
 import type { Metadata } from "next";
 import { Libre_Franklin } from "next/font/google";
 import "./globals.css";
+import { GameProvider } from '@/context/GameProvider';
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const libreFranklin = Libre_Franklin({
   subsets: ['latin'], // Add additional subsets if needed
@@ -21,10 +24,11 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body
-        className={`${libreFranklin.variable} ${libreFranklin.variable} antialiased`}
-      >
-        {children}
+      <body className={`${libreFranklin.variable}`}>
+        <GameProvider>
+          {children}
+          <ToastContainer position="top-center" autoClose={2000} />
+        </GameProvider>
       </body>
     </html>
   );

@@ -3,6 +3,7 @@ import { GameContext } from './GameContext';
 import { epoch } from './config/config';
 import { calculatePoints, incrementDups, isPangram, generatePointsMessage } from './utils/gameLogic';
 import { IGameContext } from './config/interfaces';
+import { toast } from 'react-toastify';
 
 export const GameProvider = ({ children } : { children: ReactNode }) => {
     const MIN_SCORE: number = 33;
@@ -33,7 +34,7 @@ export const GameProvider = ({ children } : { children: ReactNode }) => {
 
     const maxScore: number = useMemo(() => {
         return todaysAnswers.reduce((acc: number, word: string) => {
-            return acc + calculatePoints({ word })
+            return acc + calculatePoints(word)
         }, 0);
     }, [todaysAnswers]);
     
@@ -42,7 +43,7 @@ export const GameProvider = ({ children } : { children: ReactNode }) => {
     const userScore: number = useMemo(() => {
         return correctGuessesArray.reduce(
             (acc: number, word: string): number => {
-                return acc + calculatePoints({ word })
+                return acc + calculatePoints(word)
             }, 0
         )
     }, [correctGuessesArray]);
@@ -84,6 +85,10 @@ export const GameProvider = ({ children } : { children: ReactNode }) => {
 
     const themeColor: string = theme === "light" ? "white" : "#1c1b22";
     
+    const showMessage = () => {
+
+    };
+
     const submitGuess = useCallback((guess: string) => {
         if (guess.length < 4) {
             showMessage("Too short!");
@@ -111,18 +116,19 @@ export const GameProvider = ({ children } : { children: ReactNode }) => {
             return newGuesses;
         });
 
-        const points: number = calculatePoints({word: guess});
+        const points: number = calculatePoints(guess);
 
-        if (isPangram({word: guess})) {
-            showMessage(`Pangram! + ${points}`); 
+        if (isPangram(guess)) {
+            showMessage(`Pangram! + ${points}`)
         } else {
             showMessage(generatePointsMessage(points))
-        }
-    });
+        } 
+        
+    }, [correctGuesses, todaysMiddleLetter, todaysAnswers, showMessage]);
 
     const startGame;
     const setYesterdaysAnswersandLastGameDate;
-    const showMessage;
+
 
 
     const value: IGameContext = useMemo(() => ({
@@ -152,11 +158,13 @@ export const GameProvider = ({ children } : { children: ReactNode }) => {
         
         // Actions
         submitGuess,
+        showMessage,
 
     }), [correctGuesses, todaysAnswers, todaysLetters, todaysMiddleLetter, gameDate, 
         lastGameDate, yesterdaysAnswers, yesterdaysLetters, yesterdaysMiddleLetter, theme, 
         pointsMessages, MIN_SCORE, maxScore, scoreLevels, correctGuessesArray, userScore,
-        progressIndex, progressPercentage, themeColor, gameDateObj, gameDateString, submitGuess]);
+        progressIndex, progressPercentage, themeColor, gameDateObj, gameDateString, submitGuess, 
+        showMessage]);
     
 
 
