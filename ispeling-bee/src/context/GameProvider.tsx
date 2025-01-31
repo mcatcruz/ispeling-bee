@@ -121,8 +121,8 @@ export const GameProvider = ({ children } : { children: ReactNode }) => {
         
     }, [correctGuesses, todaysMiddleLetter, todaysAnswers, showMessage]);
 
-    const startGame;
-    const setYesterdaysAnswersandLastGameDate;
+    // const startGame;
+    // const setYesterdaysAnswersandLastGameDate;
 
 
 
