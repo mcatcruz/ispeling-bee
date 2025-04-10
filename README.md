@@ -2,6 +2,8 @@
 
 **Ispeling Bee** is a Filipino spelling game inspired by the New York Times Spelling Bee. The goal of the project is to provide an engaging, Filipino word game experience while deepening my full-stack development skills and exploring responsive UI and SVG rendering.
 
+> 🛠️ **Note**: To ensure you're seeing the latest updates on project progress, please navigate to the `feature/frontend-init` branch and run `npm run dev`.
+
 ## 🎯 Purpose
 
 This project is part of my portfolio and learning journey as a software engineer. It gives me space to:
